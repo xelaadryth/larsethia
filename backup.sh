@@ -25,10 +25,14 @@ do
     # If the GitHub repo changed at all or a day has passed, backup the db
     if test `git pull -f | wc -l` -gt 1
     then
-        echo Backing up database at ${datestamp}.
+        echo Changes detected, backing up database at ${datestamp}.
         sqlite3 ${target_db} ".backup ${backup_dir}/${datestamp}-evennia.db3.bak"
         last_datestamp=${datestamp}
     elif test ${datestamp} -gt `expr ${last_datestamp} + 1000000`
+    then
+        echo Time elapsed, backing up database at ${datestamp}.
+        sqlite3 ${target_db} ".backup ${backup_dir}/${datestamp}-evennia.db3.bak"
+        last_datestamp=${datestamp}
     else
         echo No backup necessary.
     fi
