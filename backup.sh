@@ -6,6 +6,11 @@ git_branch=origin/master
 target_db=server/evennia.db3
 backup_dir=server/backups
 
+if [ -z ${poll_git_backup+x} ]
+then
+    exit 0
+fi
+
 # Set up Git
 echo Setting Git configurations.
 git config --global user.name "auto_puller"

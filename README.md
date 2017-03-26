@@ -10,7 +10,8 @@ Just connect to the game at http://ec2-34-208-236-184.us-west-2.compute.amazonaw
 5. Generate an OAuth access token on GitHub with repository read permissions and put it in `git_access_token.txt` at the top-level
 6. Locally execute `push_db.sh` and `push_settings.sh` to `scp` necessary files over to EC2, and then move them to their respective locations
 7. Install dependencies (`docker`, `docker-compose (v1)`)
-8. `sudo docker-compose up -d`
+8. Set `poll_git_backup=true`
+9. `sudo docker-compose up -d`
 
 ## To Do
 - Come up with a to-do list
