@@ -16,9 +16,9 @@ git branch --set-upstream-to=${git_branch}
 
 last_datestamp=`date +"%Y%m%d%H%M%S"`
 
+echo Git configured. Starting polling.
 while true
 do
-    echo Starting polling.
     datestamp=`date +"%Y%m%d%H%M%S"`
 
     git reset HEAD --hard
