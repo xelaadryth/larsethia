@@ -1,5 +1,8 @@
 *.py[cod]
 
+# Git access token
+git_access_token.txt
+
 # C extensions
 *.so
 
