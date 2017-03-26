@@ -1,21 +1,5 @@
 version: '2'
 services:
-    backup:
-        build: ../../git_sqlite_backup
-        volumes:
-          - .:/usr/src/larsethia
-        environment:
-          - update_git_access_token
-          - backup_git_access_token
-          - email=xelaadryth@github.com
-          - polling_enabled=true
-          - update_dir=/usr/src/larsethia
-          - update_git_user=xelaadryth
-          - update_git_repo=larsethia
-          - target_file=server/evennia.db3
-          - backup_dir=/usr/src/larsethia_db_backups
-          - backup_git_user=xelaadryth
-          - backup_git_repo=larsethia_db_backups
     server:
         build: bin/docker
         volumes:
@@ -24,6 +8,4 @@ services:
           - 4000:4000
           - 80:8000
           - 8001:8001
-        depends_on:
-          - "backup"
  
