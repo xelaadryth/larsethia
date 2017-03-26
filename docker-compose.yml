@@ -1,11 +1,8 @@
-version: '2'
-services:
-    server:
-        build: bin/docker
-        volumes:
-          - .:/usr/src/larsethia
-        ports:
-          - 4000:4000
-          - 80:8000
-          - 8001:8001
- 
+server:
+    build: bin/docker
+    volumes:
+      - .:/usr/src/larsethia
+    ports:
+      - 4000:4000
+      - 80:8000
+      - 8001:8001
