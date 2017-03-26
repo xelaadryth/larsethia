@@ -5,6 +5,7 @@ services:
         volumes:
           - .:/usr/src/larsethia
         environment:
+          - pulling_enabled=false
           - update_dir=/usr/src/larsethia
           - update_git_user=xelaadryth
           - update_git_repo=larsethia
