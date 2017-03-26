@@ -1,6 +1,6 @@
 server:
     build: bin/evennia
-    workdir: /usr/src/larsethia
+    working_dir: /usr/src/larsethia
     volumes:
       - .:/usr/src/larsethia
     ports:
@@ -9,6 +9,6 @@ server:
       - 8001:8001
 backup:
     build: bin/backup
-    workdir: /usr/src/larsethia
+    working_dir: /usr/src/larsethia
     volumes:
       - .:/usr/src/larsethia
