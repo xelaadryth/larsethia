@@ -1,4 +1,8 @@
 #!/bin/sh
+git_access_token=`cat git_access_token.txt`
+git_user=xelaadryth
+git_repo=larsethia
+git_branch=origin/master
 
 # Set up Git
 git config --global user.name "auto_puller"
