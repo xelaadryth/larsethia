@@ -1,5 +1,8 @@
 *.py[cod]
 
+# Secrets
+git_access_token.txt
+
 # C extensions
 *.so
 
