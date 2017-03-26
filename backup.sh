@@ -26,12 +26,12 @@ do
     if test `git pull -f | wc -l` -gt 1
     then
         echo Changes detected, backing up database at ${datestamp}.
-        sqlite3 ${target_db} ".backup ${backup_dir}/${datestamp}-evennia.db3.bak"
+        sqlite3 ${target_db} ".backup ${backup_dir}/${datestamp}-evennia.db3"
         last_datestamp=${datestamp}
     elif test ${datestamp} -gt `expr ${last_datestamp} + 1000000`
     then
         echo Time elapsed, backing up database at ${datestamp}.
-        sqlite3 ${target_db} ".backup ${backup_dir}/${datestamp}-evennia.db3.bak"
+        sqlite3 ${target_db} ".backup ${backup_dir}/${datestamp}-evennia.db3"
         last_datestamp=${datestamp}
     else
         echo No backup necessary.

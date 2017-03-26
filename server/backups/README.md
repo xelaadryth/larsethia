@@ -1,0 +1,1 @@
+This is where server backups go. For now, these are just stored locally on the instance the `docker-compose` is running on. Since it contains hashed passwords, we need a safer place to store them that's still accessible.
