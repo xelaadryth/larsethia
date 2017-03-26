@@ -5,11 +5,12 @@ Commands describe the input the player can do to the game.
 
 """
 
-from evennia import Command as BaseCommand
+from evennia.commands.default.muxcommand import MuxCommand
+# from evennia import Command as BaseCommand
 # from evennia import default_cmds
 
 
-class Command(BaseCommand):
+class Command(MuxCommand):
     """
     Inherit from this if you want to create your own command styles
     from scratch.  Note that Evennia's default commands inherits from
