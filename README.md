@@ -1,4 +1,7 @@
 # Welcome to Larsethia!
+## How to Play
+Just connect to the game at http://ec2-34-208-236-184.us-west-2.compute.amazonaws.com/ by hitting the "Play Online" tab at the top. To log out, go back to the main page and click "Log Out" in the top-right.
+
 ## EC2 Set-up Instructions
 1. Clone this repo as a submodule of `evennia/evennia`
 2. Start the Evennia server locally with `evennia.bat --initsettings`, `evennia.bat migrate`, and `evennia.bat start` to create the initial db, create a superuser, and server settings file.
