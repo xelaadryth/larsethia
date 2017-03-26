@@ -9,7 +9,7 @@ services:
           - update_git_user=xelaadryth
           - update_git_repo=larsethia
           - target_file=server/evennia.db3
-          - backup_dir=/usr/src/git_sqlite_backup
+          - backup_dir=/usr/src/larsethia_db_backups
           - backup_git_user=xelaadryth
           - backup_git_repo=larsethia_db_backups
     server:
