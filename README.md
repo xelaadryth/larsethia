@@ -14,4 +14,6 @@ Just connect to the game at http://ec2-34-208-236-184.us-west-2.compute.amazonaw
 9. `sudo docker-compose up -d`
 
 ## To Do
-- Come up with a to-do list
+- Consider undoing inheritance from Object and using a shared function instead
+- Command to build exits to existing rooms with the same syntax as `@dig`
+- Containers as locks
