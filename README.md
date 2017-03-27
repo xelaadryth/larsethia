@@ -1,6 +1,6 @@
 # Welcome to Larsethia!
 ## How to Play
-Just connect to the game at http://ec2-34-208-236-184.us-west-2.compute.amazonaws.com/ by hitting the "Play Online" tab at the top. To log out, go back to the main page and click "Log Out" in the top-right.
+Just connect to the game at http://larsethia.themud.org/ by hitting the "Play Online" tab at the top. To log out, go back to the main page and click "Log Out" in the top-right.
 
 ## How to Dev
 1. Follow the instructions to install https://github.com/evennia/evennia
