@@ -105,7 +105,6 @@ class Exit(Object):
         exit_cmdset.add(cmd)
         return exit_cmdset
 
-
     # Command hooks
     def basetype_setup(self):
         """
@@ -166,12 +165,7 @@ class Exit(Object):
         if traversing_object.move_to(target_location):
             self.at_after_traverse(traversing_object, source_location)
         else:
-            if self.db.err_traverse:
-                # if exit has a better error message, let's use it.
-                self.caller.msg(self.db.err_traverse)
-            else:
-                # No shorthand error message. Call hook.
-                self.at_failed_traverse(traversing_object)
+            self.at_failed_traverse(traversing_object)
 
     def at_failed_traverse(self, traversing_object):
         """
@@ -186,4 +180,21 @@ class Exit(Object):
             read for an error string instead.
 
         """
-        traversing_object.msg("You cannot go there.")
+        if self.db.err_traverse:
+            # if exit has a better error message, let's use it.
+            self.caller.msg(self.db.err_traverse)
+        else:
+            # No shorthand error message. Call hook.
+            traversing_object.msg("You cannot go there.")
+
+    def return_appearance(self, looker):
+        """
+        This formats a description. It is the hook a 'look' command
+        should call.
+
+        Args:
+            looker (Object): Object doing the looking.
+        """
+        if not self.db.desc:
+            return looker.at_look(self.destination)
+        return super(Exit, self).return_appearance(looker)
