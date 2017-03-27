@@ -19,4 +19,6 @@ Just connect to the game at http://larsethia.themud.org/ by hitting the "Play On
 7. `sudo docker-compose up -d`
 
 ## To Do
+- Scripts to a folder to not clutter the base directory
+- Reorganize dockerfiles into a folder and find out how to call from docker compose
 - Containers as locks
