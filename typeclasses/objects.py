@@ -12,7 +12,48 @@ inheritance.
 """
 from evennia import DefaultObject
 
-class Object(DefaultObject):
+
+class SharedObject(DefaultObject):
+    """
+    Defines functions that should be shared across Characters, Exits, Objects, and Rooms.
+    Used as a mix-in or directly inherited from for all of those classes.
+    """
+    def return_appearance(self, looker):
+        """
+        This formats a description. It is the hook a 'look' command
+        should call.
+
+        Args:
+            looker (Object): Object doing the looking.
+        """
+        if not looker:
+            return ""
+        # get and identify all objects
+        visible = (con for con in self.contents if con != looker
+                   and con.access(looker, "view")
+                   and con.access(looker, "notice", default=True))
+        exits, users, things = [], [], []
+        for con in visible:
+            key = con.get_display_name(looker)
+            if con.destination:
+                exits.append(key)
+            elif con.has_player:
+                users.append("|c%s|n" % key)
+            else:
+                things.append(key)
+        # get description, build string
+        string = "|c%s|n\n" % self.get_display_name(looker)
+        desc = self.db.desc
+        if desc:
+            string += "%s" % desc
+        if exits:
+            string += "\n|wExits:|n " + ", ".join(exits)
+        if users or things:
+            string += "\n|wYou see:|n " + ", ".join(users + things)
+        return string
+
+
+class Object(SharedObject):
     """
     This is the root typeclass object, implementing an in-game Evennia
     game object, such as having a location, being able to be
@@ -160,62 +201,4 @@ class Object(DefaultObject):
 
      """
 
-    def basetype_setup(self):
-        """
-        This sets up the default properties of an Object, just before
-        the more general at_object_creation.
-
-        You normally don't need to change this unless you change some
-        fundamental things like names of permission groups.
-
-        """
-        # the default security setup fallback for a generic
-        # object. Overload in child for a custom setup. Also creation
-        # commands may set this (create an item and you should be its
-        # controller, for example)
-
-        self.locks.add(";".join([
-            "control:perm(Immortals)",  # edit locks/permissions, delete
-            "examine:perm(Builders)",   # examine properties
-            "view:all()",               # look at object (visibility)
-            "notice:all()",             # appears in contents list of other objects
-            "edit:perm(Wizards)",       # edit properties/attributes
-            "delete:perm(Wizards)",     # delete object
-            "get:all()",                # pick up object
-            "call:true()",              # allow to call commands on this object
-            "tell:perm(Wizards)",        # allow emits to this object
-            "puppet:pperm(Immortals)"])) # lock down puppeting only to staff by default
-
-    def return_appearance(self, looker):
-        """
-        This formats a description. It is the hook a 'look' command
-        should call.
-
-        Args:
-            looker (Object): Object doing the looking.
-        """
-        if not looker:
-            return ""
-        # get and identify all objects
-        visible = (con for con in self.contents if con != looker
-                   and con.access(looker, "view")
-                   and con.access(looker, "notice"))
-        exits, users, things = [], [], []
-        for con in visible:
-            key = con.get_display_name(looker)
-            if con.destination:
-                exits.append(key)
-            elif con.has_player:
-                users.append("|c%s|n" % key)
-            else:
-                things.append(key)
-        # get description, build string
-        string = "|c%s|n\n" % self.get_display_name(looker)
-        desc = self.db.desc
-        if desc:
-            string += "%s" % desc
-        if exits:
-            string += "\n|wExits:|n " + ", ".join(exits)
-        if users or things:
-            string += "\n|wYou see:|n " + ", ".join(users + things)
-        return string
+    pass
