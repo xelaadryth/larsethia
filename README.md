@@ -19,6 +19,4 @@ Just connect to the game at http://larsethia.themud.org/ by hitting the "Play On
 7. `sudo docker-compose up -d`
 
 ## To Do
-- Consider undoing inheritance from Object and using a shared function instead
-- Command to build exits to existing rooms with the same syntax as `@dig`
 - Containers as locks
