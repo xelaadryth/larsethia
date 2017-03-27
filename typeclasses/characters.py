@@ -11,7 +11,7 @@ from django.conf import settings
 import time
 from typeclasses.objects import Object
 
-class DefaultCharacter(Object):
+class Character(Object):
     """
     This implements an Object puppeted by a Session - that is,
     a character avatar controlled by a player.
@@ -28,7 +28,7 @@ class DefaultCharacter(Object):
         Character object works).
 
         """
-        super(DefaultCharacter, self).basetype_setup()
+        super(Character, self).basetype_setup()
         self.locks.add(";".join(["get:false()",  # noone can pick up the character
                                  "call:false()"])) # no commands can be called on character from outside
         # add the default cmdset

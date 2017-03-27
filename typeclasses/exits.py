@@ -55,7 +55,7 @@ class ExitCommand(Command):
             return " (%s)" % self.obj.get_display_name(caller)
 
 
-class DefaultExit(Object):
+class Exit(Object):
     """
     This is the base exit object - it connects a location to another.
     This is done by the exit assigning a "command" on itself with the
@@ -82,7 +82,7 @@ class DefaultExit(Object):
         exit's name, triggering the movement between rooms.
 
         Args:
-            exidbobj (Object): The DefaultExit object to base the command on.
+            exidbobj (Object): The Exit object to base the command on.
 
         """
 
@@ -115,7 +115,7 @@ class DefaultExit(Object):
         sure you include all the functionality in this method.
 
         """
-        super(DefaultExit, self).basetype_setup()
+        super(Exit, self).basetype_setup()
 
         # setting default locks (overload these in at_object_creation()
         self.locks.add(";".join(["puppet:false()", # would be weird to puppet an exit ...

@@ -159,6 +159,33 @@ class Object(DefaultObject):
                                  object speaks
 
      """
+
+    def basetype_setup(self):
+        """
+        This sets up the default properties of an Object, just before
+        the more general at_object_creation.
+
+        You normally don't need to change this unless you change some
+        fundamental things like names of permission groups.
+
+        """
+        # the default security setup fallback for a generic
+        # object. Overload in child for a custom setup. Also creation
+        # commands may set this (create an item and you should be its
+        # controller, for example)
+
+        self.locks.add(";".join([
+            "control:perm(Immortals)",  # edit locks/permissions, delete
+            "examine:perm(Builders)",   # examine properties
+            "view:all()",               # look at object (visibility)
+            "notice:all()",             # appears in contents list of other objects
+            "edit:perm(Wizards)",       # edit properties/attributes
+            "delete:perm(Wizards)",     # delete object
+            "get:all()",                # pick up object
+            "call:true()",              # allow to call commands on this object
+            "tell:perm(Wizards)",        # allow emits to this object
+            "puppet:pperm(Immortals)"])) # lock down puppeting only to staff by default
+
     def return_appearance(self, looker):
         """
         This formats a description. It is the hook a 'look' command
@@ -172,7 +199,7 @@ class Object(DefaultObject):
         # get and identify all objects
         visible = (con for con in self.contents if con != looker
                    and con.access(looker, "view")
-                   and not con.access(looker, "hidden"))
+                   and con.access(looker, "notice"))
         exits, users, things = [], [], []
         for con in visible:
             key = con.get_display_name(looker)

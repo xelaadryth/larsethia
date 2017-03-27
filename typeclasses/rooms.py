@@ -8,7 +8,7 @@ Rooms are simple containers that has no location of their own.
 from typeclasses.objects import Object
 
 
-class DefaultRoom(Object):
+class Room(Object):
     """
     This is the base room object. It's just like any Object except its
     location is always `None`.
@@ -20,7 +20,7 @@ class DefaultRoom(Object):
 
         """
 
-        super(DefaultRoom, self).basetype_setup()
+        super(Room, self).basetype_setup()
         self.locks.add(";".join(["get:false()",
                                  "puppet:false()"])) # would be weird to puppet a room ...
         self.location = None

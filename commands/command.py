@@ -12,6 +12,9 @@ from evennia.commands.default.muxcommand import MuxCommand
 
 class Command(MuxCommand):
     """
+    Note that in the code, most of the default commands most likely do NOT inherit from this class, so be careful if
+    you change this class.
+
     Inherit from this if you want to create your own command styles
     from scratch.  Note that Evennia's default commands inherits from
     MuxCommand instead.
