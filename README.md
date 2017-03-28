@@ -21,4 +21,7 @@ Just connect to the game at http://larsethia.themud.org/ by hitting the "Play On
 ## To Do
 - `@create` should lock `get:false()` by default
 - `@hide` command that sets lock `notice:false()`
-- Containers as locks
+- Containers as locks (if lock container not set, not treated as container. If lock access is true, the player has permission to access the container's contents)
+- Design a combat system
+- Design a play experience (What's the main goals and focus of the game? Story-driven/combat-driven/exploration-driven?)
+- Come up with a storyline
