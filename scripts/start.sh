@@ -1,5 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 # IMPORTANT: Make sure this uses unix-style line-endings!
+base_dir=/usr/src/larsethia
+
+cd ${base_dir}
 
 # Cleanup running things
 rm server/portal.pid || true

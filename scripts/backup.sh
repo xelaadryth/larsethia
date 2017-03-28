@@ -1,15 +1,21 @@
-#!/bin/sh
-git_access_token=`cat git_access_token.txt`
+#!/bin/bash
 git_user=xelaadryth
 git_repo=larsethia
 git_branch=origin/master
 target_db=server/evennia.db3
 backup_dir=server/backups
+base_dir=/usr/src/larsethia
 
-if [ -z ${poll_git_backup+x} ]
+if [ -z "${poll_git_backup}" ]
 then
+    echo Local run detected, not auto-pulling from Git.
     exit 0
 fi
+echo Server run detected, will auto-pull from Git.
+
+git_access_token=`cat git_access_token.txt`
+
+cd ${base_dir}
 
 # Set up Git
 echo Setting Git configurations.

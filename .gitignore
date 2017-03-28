@@ -3,6 +3,9 @@
 # Git access token
 git_access_token.txt
 
+# Pulled settings.py file from AWS
+server/conf/settings-pulled.py
+
 # C extensions
 *.so
 
