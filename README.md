@@ -22,13 +22,13 @@ Just connect to the game at http://larsethia.themud.org/ by hitting the "Play On
 - `@create` should lock `get:false()` by default
 - `@hide` command that sets lock `notice:false()`
 - `@detail` command that creates, locks `get:false()`, locks `notice:false()`
-- Containers as locks (if lock container not set, not treated as container. If lock access is true, the player has permission to access the container's contents.) [Jobin]
+- Containers as locks (if lock container not set, not treated as container. If lock access is true, the player has permission to access the container's contents.) **[Jobin]**
   - "get book from chest"
   - "put book in chest"
   - Prevent people from doing "get book from That NPC"
   - Prevent people from doing "get book from Some Player"
   - Address parsing issues such as an NPC named "Lara from Briskell" and then "get book from Lara from Briskell" (splitting on first/last instance of " from " or " in " is not guaranteed)
-- Combat system [Eric]
+- Combat system **[Eric]**
   - Most likely tick-based (2-3 second rounds)
   - Stats feed into a formula for base damage dealt
   - Active abilities to give options in combat
