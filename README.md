@@ -3,11 +3,11 @@
 Just connect to the game at http://larsethia.themud.org/ by hitting the "Play Online" tab at the top. To log out, go back to the main page and click "Log Out" in the top-right.
 
 ## How to Dev
-1. Follow the instructions to install https://github.com/evennia/evennia
+1. Follow the instructions to install https://github.com/evennia/evennia and get a sample initialized game server running to undertstand the flow
 2. At the base directory of the Evennia repo, git clone this one (and add it to your Evennia `.gitignore`)
-3. `cd` into the new `larsethia` directory and start the Evennia server locally with `evennia.bat --initsettings`, `evennia.bat migrate`, and `evennia.bat start` to create the server settings file, initial db, and create a superuser (admin). Make sure to do this with a TTY-enabled terminal, for instance `cmd.exe` or using `winpty` if using `bash` on Windows
+3. `cd` into the new `larsethia` directory and start the Evennia server locally with `evennia.bat --initsettings` (generates settings.py), `evennia.bat migrate` (initializes sqlite DB), and `evennia.bat start` to start the server and prompt creation of a superuser. Make sure to do this with a TTY-enabled terminal, for instance `cmd.exe` or using `winpty` if using `bash` on Windows
 4. With this you can get started in your local sandbox environment, or message me and I can figure out how to get the most up-to-date `settings.py` and `evennia.db3` files to you
-5. Any changes pushed to this Git repo get cloned to the production server every 10 seconds and backs up the DB, you just need to call `@reload` in the game to propagate code changes
+5. Any changes pushed to this Git repo get cloned to the production server every 10 seconds and backs up the DB (locally on EC2), you just need to call `@reload` in the game to propagate code changes
 
 ## EC2 Set-up Instructions
 1. Start an EC2 instance on AWS with web access to port 80, TCP to port 4000 (for Telnet)
@@ -21,7 +21,16 @@ Just connect to the game at http://larsethia.themud.org/ by hitting the "Play On
 ## To Do
 - `@create` should lock `get:false()` by default
 - `@hide` command that sets lock `notice:false()`
-- Containers as locks (if lock container not set, not treated as container. If lock access is true, the player has permission to access the container's contents)
-- Design a combat system
+- Containers as locks (if lock container not set, not treated as container. If lock access is true, the player has permission to access the container's contents.) [Jobin]
+  - "get book from chest"
+  - "put book in chest"
+  - Prevent people from doing "get book from That NPC"
+  - Prevent people from doing "get book from Some Player"
+  - Address parsing issues such as an NPC named "Lara from Briskell" and then "get book from Lara from Briskell" (splitting on first/last instance of " from " or " in " is not guaranteed)
+- Design a combat system [Eric]
+  - Most likely tick-based (2-3 second rounds)
+  - Stats feed into a formula for base damage dealt
+  - Active abilities to give options in combat
 - Design a play experience (What's the main goals and focus of the game? Story-driven/combat-driven/exploration-driven?)
 - Come up with a storyline
+- Implement game systems
