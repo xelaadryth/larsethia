@@ -21,16 +21,24 @@ Just connect to the game at http://larsethia.themud.org/ by hitting the "Play On
 ## To Do
 - `@create` should lock `get:false()` by default
 - `@hide` command that sets lock `notice:false()`
+- `@detail` command that creates, locks `get:false()`, locks `notice:false()`
 - Containers as locks (if lock container not set, not treated as container. If lock access is true, the player has permission to access the container's contents.) [Jobin]
   - "get book from chest"
   - "put book in chest"
   - Prevent people from doing "get book from That NPC"
   - Prevent people from doing "get book from Some Player"
   - Address parsing issues such as an NPC named "Lara from Briskell" and then "get book from Lara from Briskell" (splitting on first/last instance of " from " or " in " is not guaranteed)
-- Design a combat system [Eric]
+- Combat system [Eric]
   - Most likely tick-based (2-3 second rounds)
   - Stats feed into a formula for base damage dealt
   - Active abilities to give options in combat
+- NPC class that inherits from Character
+  - Command `@npc` to create an NPC, similar to the `@create` command but locks `get:false()`
+  - If it has an associated dialogue file, try to use it
 - Design a play experience (What's the main goals and focus of the game? Story-driven/combat-driven/exploration-driven?)
 - Come up with a storyline
-- Implement game systems
+- Decide on game systems and then add them to the to-do list when ready to be implemented
+  - Levels/Advancement (most likely blank slate and then building up from there)
+  - Stats/passive skills (just a level)
+  - Active abilities
+  - Quests
