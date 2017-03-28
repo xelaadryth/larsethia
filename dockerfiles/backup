@@ -3,4 +3,4 @@ FROM alpine:latest
 RUN apk add --update git \
     sqlite
 
-CMD bash scripts/backup.sh
+CMD sh scripts/backup.sh
