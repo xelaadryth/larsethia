@@ -35,4 +35,14 @@ class Exit(SharedObject, DefaultExit):
                                         not be called if the attribute `err_traverse` is
                                         defined, in which case that will simply be echoed.
     """
-    pass
+    def return_appearance(self, looker):
+        """
+        This formats a description. It is the hook a 'look' command
+        should call.
+
+        Args:
+            looker (Object): Object doing the looking.
+        """
+        if not self.db.desc:
+            return looker.at_look(self.destination)
+        return super(Exit, self).return_appearance(looker)
