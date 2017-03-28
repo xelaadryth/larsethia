@@ -15,8 +15,7 @@ Just connect to the game at http://larsethia.themud.org/ by hitting the "Play On
 3. Generate an OAuth access token on GitHub with repository read permissions and put it in `git_access_token.txt` at the top-level
 4. Locally execute `push_db.sh` and `push_settings.sh` to `scp` your `evennia.db3` and `settings.py` over to EC2, and then move them to their respective locations manually
 5. Install dependencies
-6. Set environment variable `poll_git_backup=true`
-7. `sudo docker-compose up -d`
+6. `sudo poll_git_backup=true docker-compose up -d` to enable auto-pull from Git and run all of the docker containers in daemon mode
 
 ## To Do
 - Containers as locks
