@@ -16,7 +16,7 @@ own cmdsets by inheriting from them or directly from `evennia.CmdSet`.
 
 from evennia import default_cmds
 from evennia.commands.default.general import CmdGive
-from systems.building import CmdCreate
+from systems.building import CmdCreate, CmdHide, CmdUnhide
 
 
 class CharacterCmdSet(default_cmds.CharacterCmdSet):
@@ -32,8 +32,12 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         Populates the cmdset
         """
         super(CharacterCmdSet, self).at_cmdset_creation()
+        # Remove the default give command because it's weird
         self.remove(CmdGive())
+        # Override the original @create command to lock get and create it in the room by default
         self.add(CmdCreate())
+        self.add(CmdHide())
+        self.add(CmdUnhide())
 
 
 class PlayerCmdSet(default_cmds.PlayerCmdSet):

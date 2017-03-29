@@ -71,3 +71,56 @@ class CmdCreate(ObjManipCommand):
                 obj.db.desc = "You see nothing special."
         if string:
             caller.msg(string)
+
+
+class CmdHide(ObjManipCommand):
+    """
+    Hides objects so they're not obvious to players by removing them from the list of room contents.
+
+    Usage:
+      @hide <objname>
+    Example:
+      @hide rock
+
+    This command is equivalent to "@lock <objname> = notice:false()", which means that whatever contains it
+    (usually a location, but can be any object/character) will not list it, even though players can still look
+    at it if they realize it exists.
+    """
+    key = "@hide"
+    locks = "cmd:perm(hide) or perm(Builders)"
+    help_category = "Building"
+
+    def func(self):
+        caller = self.caller
+        if not self.args:
+            string = "@hide <objname>"
+            caller.msg(string)
+            return
+
+        caller.execute_cmd("@lock {} = notice:false()".format(self.lhs))
+
+
+class CmdUnhide(ObjManipCommand):
+    """
+    Unhides a hidden object to make it noticeable again.
+
+    Usage:
+      @unhide <objname>
+    Example:
+      @unhide rock
+
+    This command is equivalent to "@lock/del <objname>/notice", which means that whatever contains it
+    (usually a location, but can be any object/character) will list it again.
+    """
+    key = "@unhide"
+    locks = "cmd:perm(hide) or perm(Builders)"
+    help_category = "Building"
+
+    def func(self):
+        caller = self.caller
+        if not self.args:
+            string = "@unhide <objname>"
+            caller.msg(string)
+            return
+
+        caller.execute_cmd("@lock/del {}/notice".format(self.lhs))

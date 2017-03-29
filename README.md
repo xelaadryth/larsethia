@@ -19,9 +19,6 @@ Just connect to the game at http://larsethia.themud.org/ by hitting the "Play On
 7. (Optional) `docker-compose logs -f` to show live output
 
 ## To Do
-- `@create` should lock `get:false()` by default
-- `@hide` command that sets lock `notice:false()`
-- `@detail` command that creates, locks `get:false()`, locks `notice:false()`
 - Standardize a process for unit tests
 - Containers as locks (if lock container not set, not treated as container. If lock access is true, the player has permission to access the container's contents.) **[Jobin]**
   - "get book from chest"
