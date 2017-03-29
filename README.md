@@ -19,6 +19,10 @@ Just connect to the game at http://larsethia.themud.org/ by hitting the "Play On
 7. (Optional) `docker-compose logs -f` to show live output
 
 ## To Do
+- NPC class that inherits from Character **[Eric]**
+  - Command `@npc` to create an NPC, similar to the `@create` command but locks `get:false()`
+  - Command `@addtalk` to add dialogue to an NPC
+- Remove git credential requirement from backup script (no longer pushes to Git repo)
 - Standardize a process for unit tests
 - Containers as locks (if lock container not set, not treated as container. If lock access is true, the player has permission to access the container's contents.) **[Jobin]**
   - "get book from chest"
@@ -30,9 +34,6 @@ Just connect to the game at http://larsethia.themud.org/ by hitting the "Play On
   - Most likely tick-based (2-3 second rounds)
   - Stats feed into a formula for base damage dealt
   - Active abilities to give options in combat
-- NPC class that inherits from Character
-  - Command `@npc` to create an NPC, similar to the `@create` command but locks `get:false()`
-  - If it has an associated dialogue file, try to use it
 - Design a play experience (What's the main goals and focus of the game? Story-driven/combat-driven/exploration-driven?)
 - Come up with a storyline
 - Decide on game systems and then add them to the to-do list when ready to be implemented
