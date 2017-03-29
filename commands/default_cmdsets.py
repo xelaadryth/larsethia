@@ -16,6 +16,8 @@ own cmdsets by inheriting from them or directly from `evennia.CmdSet`.
 
 from evennia import default_cmds
 from evennia.commands.default.general import CmdGive
+from systems.building import CmdCreate
+
 
 class CharacterCmdSet(default_cmds.CharacterCmdSet):
     """
@@ -31,6 +33,7 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         """
         super(CharacterCmdSet, self).at_cmdset_creation()
         self.remove(CmdGive())
+        self.add(CmdCreate())
 
 
 class PlayerCmdSet(default_cmds.PlayerCmdSet):
