@@ -11,6 +11,7 @@ cd ${base_dir}
 # Set up Git
 echo Setting Git configurations.
 git config --global user.name "auto_puller"
+git config --global user.email "xelaadryth@github.com"
 git remote set-url origin https://github.com/${git_user}/${git_repo}.git
 # Pull branch info
 git fetch
