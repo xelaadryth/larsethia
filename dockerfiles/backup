@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM garland/aws-cli-docker:0.1
 
 RUN apk add --update git \
     sqlite

@@ -10,19 +10,18 @@ Just connect to the game at http://larsethia.themud.org/ by hitting the "Play On
 5. Any changes pushed to this Git repo get cloned to the production server every 10 seconds and backs up the DB (locally on EC2), you just need to call `@reload` in the game to propagate code changes
 
 ## EC2 Set-up Instructions
-1. Start an EC2 instance on AWS with web access to port 80, TCP to port 4000 (for Telnet)
+1. Start an EC2 instance on AWS with TCP to port 80 (web), TCP to port 22 (SSH), TCP to port 4000 (for Telnet), and TCP to port 8001 (webclient socket)
 2. `sudo git clone https://github.com/xelaadryth/larsethia.git /usr/src/larsethia`
-3. Generate an OAuth access token on GitHub with repository read permissions and put it in `git_access_token.txt` at the top-level
-4. Locally execute `push_db.sh` and `push_settings.sh` to `scp` your `evennia.db3` and `settings.py` over to EC2, and then move them to their respective locations manually
+3. Locally execute `push_db.sh` and `push_settings.sh` to `scp` your `evennia.db3` and `settings.py` over to EC2, and then move them to their respective locations manually
+4. Locally execute `push_aws_creds.sh` to `scp` your AWS credentials to EC2 (requires AWS CLI installed and `aws configure` executed with valid secrets)
 5. Install dependencies
-6. `sudo poll_git_backup=true docker-compose up -d` to enable auto-pull from Git and run all of the docker containers in daemon mode
+6. `sudo docker-compose up -f docker-compose-server.yml -d` to enable auto-pull from Git and run all of the docker containers in daemon mode
 7. (Optional) `docker-compose logs -f` to show live output
 
 ## To Do
 - NPC class that inherits from Character **[Eric]**
   - Command `@npc` to create an NPC, similar to the `@create` command but locks `get:false()`
   - Command `@addtalk` to add dialogue to an NPC
-- Remove git credential requirement from backup script (no longer pushes to Git repo)
 - Backup db to s3
 - Standardize a process for unit tests
 - Containers as locks (if lock container not set, not treated as container. If lock access is true, the player has permission to access the container's contents.) **[Jobin]**
