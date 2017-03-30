@@ -15,7 +15,7 @@ Just connect to the game at http://larsethia.themud.org/ by hitting the "Play On
 3. Locally execute `push_db.sh` and `push_settings.sh` to `scp` your `evennia.db3` and `settings.py` over to EC2, and then move them to their respective locations manually
 4. Locally execute `push_aws_creds.sh` to `scp` your AWS credentials to EC2 (requires AWS CLI installed and `aws configure` executed with valid secrets)
 5. Install dependencies
-6. `sudo docker-compose up -f docker-compose-server.yml -d` to enable auto-pull from Git and run all of the docker containers in daemon mode
+6. `sudo docker-compose -f docker-compose-server.yml up -d --build` to enable auto-pull from Git and run all of the docker containers in daemon mode
 7. (Optional) `docker-compose logs -f` to show live output
 
 ## To Do
