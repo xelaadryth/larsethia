@@ -22,7 +22,6 @@ Just connect to the game at http://larsethia.themud.org/ by hitting the "Play On
 - NPC class that inherits from Character **[Eric]**
   - Command `@npc` to create an NPC, similar to the `@create` command but locks `get:false()`
   - Command `@addtalk` to add dialogue to an NPC
-- Backup db to s3
 - Standardize a process for unit tests
 - Containers as locks (if lock container not set, not treated as container. If lock access is true, the player has permission to access the container's contents.) **[Jobin]**
   - "get book from chest"
