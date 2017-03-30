@@ -17,6 +17,7 @@ own cmdsets by inheriting from them or directly from `evennia.CmdSet`.
 from evennia import default_cmds
 from evennia.commands.default.general import CmdGive
 from systems.building import CmdCreate, CmdHide, CmdUnhide
+from systems.dialogue import CmdTalk, CmdAddTalk, CmdDelTalk
 
 
 class CharacterCmdSet(default_cmds.CharacterCmdSet):
@@ -38,6 +39,9 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(CmdCreate())
         self.add(CmdHide())
         self.add(CmdUnhide())
+        self.add(CmdTalk())
+        self.add(CmdAddTalk())
+        self.add(CmdDelTalk())
 
 
 class PlayerCmdSet(default_cmds.PlayerCmdSet):
