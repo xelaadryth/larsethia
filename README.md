@@ -30,8 +30,8 @@ Just connect to the game at http://larsethia.themud.org/ by hitting the "Play On
   - Most likely tick-based (2-3 second rounds)
   - Stats feed into a formula for base damage dealt
   - Active abilities to give options in combat
-- Design a play experience (What's the main goals and focus of the game? Story-driven/combat-driven/exploration-driven?)
-- Come up with a storyline
+- Design a play experience (What's the main goals and focus of the game? Story-driven/combat-driven/exploration-driven?) **[Eric]**
+- Come up with a storyline **[Eric]**
 - Decide on game systems and then add them to the to-do list when ready to be implemented
   - Levels/Advancement (most likely blank slate and then building up from there)
   - Stats/passive skills (just a level)

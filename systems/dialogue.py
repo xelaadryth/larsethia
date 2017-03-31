@@ -9,7 +9,8 @@ def talk(player, target):
     """
     # Now that we have a legal target, try to talk
     try:
-        EvMenu(player, target.db.talkFile)
+        player.db.talk_target = target
+        EvMenu(player, target.db.talk_file)
         player.location.msg_contents("{} talks to {}.".format(player.name, target.name), exclude=player)
     except ImportError:
         player.msg("Dialogue is broken, please contact the builders.")
@@ -33,7 +34,7 @@ class CmdTalk(Command):
 
     def can_talk(self, target):
         return target and (target != self.caller) and (target.access(self.caller, "view")) and\
-            (target.access(self.caller, "talk", default=True)) and target.db.talkFile
+            (target.access(self.caller, "talk", default=True)) and target.db.talk_file
 
     def func(self):
         # Acquire target
@@ -56,8 +57,16 @@ class CmdTalk(Command):
                 return
         else:
             target = self.caller.search(self.args)
-            if not self.can_talk(target):
-                self.caller.msg("There's no one talkative here.")
+            if not target:
+                self.caller.msg("You couldn't find {}.".format(self.args))
+                return
+            elif target == self.caller:
+                self.caller.msg("You talk to yourself.")
+                self.caller.location.msg_contents("{} talks to no one in particular.".format(self.caller.name),
+                                                  exclude=self.caller)
+                return
+            elif not self.can_talk(target):
+                self.caller.msg("{} isn't talkative.".format(target))
                 return
 
         talk(self.caller, target)
@@ -87,7 +96,7 @@ class CmdAddTalk(Command):
 
         # Try to talk
         if target:
-            target.db.talkFile = self.rhs
+            target.db.talk_file = self.rhs
             self.caller.msg("{}'s talk file set to: {}".format(target.key, self.rhs))
 
 
@@ -115,7 +124,7 @@ class CmdDelTalk(Command):
 
         # Try to talk
         if target:
-            target.db.talkFile = None
+            del target.db.talk_file
             self.caller.msg("{}'s talk file removed.".format(target.key))
         else:
             # We shouldn't really hit this code path
