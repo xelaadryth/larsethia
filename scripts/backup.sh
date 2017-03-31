@@ -36,7 +36,9 @@ do
     elif test ${datestamp} -gt `expr ${last_datestamp} + 1000000`
     then
         echo Time elapsed, backing up database at ${datestamp}.
-        sqlite3 ${target_db} ".backup ${backup_dir}/${datestamp}-evennia.db3"
+        new_backup=${backup_dir}/${datestamp}-evennia.db3
+        sqlite3 ${target_db} ".backup ${new_backup}"
+        aws s3 cp ${new_backup} s3://larsethia-db-backups/
         last_datestamp=${datestamp}
     else
         echo No backup necessary.
