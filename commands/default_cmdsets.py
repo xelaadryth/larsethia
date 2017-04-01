@@ -18,6 +18,7 @@ from evennia import default_cmds
 from evennia.commands.default.general import CmdGive
 from systems.building import CmdCreate, CmdHide, CmdUnhide
 from systems.dialogue import CmdTalk, CmdAddTalk, CmdDelTalk
+from systems.quests import CmdQuests, CmdQuestSet
 
 
 class CharacterCmdSet(default_cmds.CharacterCmdSet):
@@ -42,6 +43,8 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(CmdTalk())
         self.add(CmdAddTalk())
         self.add(CmdDelTalk())
+        self.add(CmdQuests())
+        self.add(CmdQuestSet())
 
 
 class PlayerCmdSet(default_cmds.PlayerCmdSet):

@@ -31,4 +31,22 @@ class Character(SharedObject, DefaultCharacter):
     at_post_puppet - Echoes "PlayerName has entered the game" to the room.
 
     """
-    pass
+    def at_object_creation(self):
+        if not self.db.quests:
+            self.db.quests = {}
+
+    def at_server_reload(self):
+        if not self.db.quests:
+            self.db.quests = {}
+
+    def quest_status(self, quest_name):
+        """
+        Check what stage of a quest the character is on
+        """
+        return self.db.quests.get(quest_name, None)
+
+    def quest_advance(self, quest_name, stage):
+        """
+        Set what stage of a quest the character is on
+        """
+        self.db.quests[quest_name] = stage
