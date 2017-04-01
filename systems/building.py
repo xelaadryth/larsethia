@@ -1,5 +1,7 @@
+from commands.command import Command
 from evennia.commands.default.building import ObjManipCommand
-from evennia.utils import create
+from evennia.server.sessionhandler import SESSIONS
+from evennia.utils import create, search
 
 
 class CmdCreate(ObjManipCommand):
@@ -73,7 +75,7 @@ class CmdCreate(ObjManipCommand):
             caller.msg(string)
 
 
-class CmdHide(ObjManipCommand):
+class CmdHide(Command):
     """
     Hides objects so they're not obvious to players by removing them from the list of room contents.
 
@@ -100,7 +102,7 @@ class CmdHide(ObjManipCommand):
         caller.execute_cmd("@lock {} = notice:false()".format(self.lhs))
 
 
-class CmdUnhide(ObjManipCommand):
+class CmdUnhide(Command):
     """
     Unhides a hidden object to make it noticeable again.
 
@@ -124,3 +126,85 @@ class CmdUnhide(ObjManipCommand):
             return
 
         caller.execute_cmd("@lock/del {}/notice".format(self.lhs))
+
+class CmdBoot(Command):
+    """
+    kick a player from the server. If there is a character without an associated player in the room, boots that instead.
+
+    Usage
+      @boot[/switches] <player obj> [: reason]
+
+    Switches:
+      quiet - Silently boot without informing player
+      sid - boot by session id instead of name or dbref
+
+    Boot a player object from the server. If a reason is
+    supplied it will be echoed to the user unless /quiet is set.
+    """
+
+    key = "@boot"
+    aliases = ["@kick"]
+    locks = "cmd:perm(boot) or perm(Wizards)"
+    help_category = "Admin"
+
+    def func(self):
+        """Implementing the function"""
+        caller = self.caller
+        args = self.args
+
+        if not args:
+            caller.msg("Usage: @boot[/switches] <player> [:reason]")
+            return
+
+        if ':' in args:
+            args, reason = [a.strip() for a in args.split(':', 1)]
+        else:
+            args, reason = args, ""
+
+        boot_list = []
+
+        if 'sid' in self.switches:
+            # Boot a particular session id.
+            sessions = SESSIONS.get_sessions(True)
+            for sess in sessions:
+                # Find the session with the matching session id.
+                if sess.sessid == int(args):
+                    boot_list.append(sess)
+                    break
+        else:
+            # Boot by player object
+            pobj = search.player_search(args)
+            if not pobj:
+                caller.msg("Player %s was not found." % args)
+                return
+            pobj = pobj[0]
+            if not pobj.access(caller, 'boot'):
+                string = "You don't have the permission to boot %s." % (pobj.key, )
+                caller.msg(string)
+                return
+            # we have a bootable object with a connected user
+            matches = SESSIONS.sessions_from_player(pobj)
+            for match in matches:
+                boot_list.append(match)
+
+        if not boot_list:
+            character = caller.search(args)
+            if character:
+                # This character has no currently attached player, but we still need to boot it
+                character.at_post_unpuppet(None)
+                caller.msg("Booting disconnected player character {}.".format(character.name))
+            else:
+                caller.msg("No matching sessions found. The Player does not seem to be online.")
+            return
+
+        # Carry out the booting of the sessions in the boot list.
+
+        feedback = None
+        if 'quiet' not in self.switches:
+            feedback = "You have been disconnected by %s.\n" % caller.name
+            if reason:
+                feedback += "\nReason given: %s" % reason
+
+        for session in boot_list:
+            session.msg(feedback)
+            session.player.disconnect_session_from_player(session)

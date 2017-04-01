@@ -32,6 +32,4 @@ Just connect to the game at http://larsethia.themud.org/ by hitting the "Play On
   - Active abilities to give options in combat
 - Design a play experience (What's the main goals and focus of the game? Story-driven/combat-driven/exploration-driven?) **[Eric]**
 - Come up with a storyline **[Eric]**
-- Make commands to kick a character artifact from a db backup **[Eric]**
-  - Set prelogout_location and then @tel/tonone <char>
 - Decide on game systems and then add them to the to-do list when ready to be implemented
