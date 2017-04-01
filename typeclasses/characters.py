@@ -9,6 +9,7 @@ creation commands.
 """
 from evennia import DefaultCharacter
 from typeclasses.objects import SharedObject
+from utils.constants import QUEST_COMPLETE
 
 
 class Character(SharedObject, DefaultCharacter):
@@ -50,3 +51,9 @@ class Character(SharedObject, DefaultCharacter):
         Set what stage of a quest the character is on
         """
         self.db.quests[quest_name] = stage
+
+    def quest_complete(self, quest_name):
+        """
+        Mark a quest as completed.
+        """
+        self.db.quests[quest_name] = QUEST_COMPLETE

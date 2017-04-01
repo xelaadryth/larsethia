@@ -1,5 +1,4 @@
 from world.quests.tutorial import INTERNAL_NAME
-from utils.constants import QUEST_COMPLETE
 
 
 def start(caller):
@@ -26,6 +25,6 @@ def portal(caller):
             'so you prepare to type "portal".')
 
     # Complete the quest
-    caller.quest_advance(INTERNAL_NAME, QUEST_COMPLETE)
+    caller.quest_complete(INTERNAL_NAME)
 
     return text, []
