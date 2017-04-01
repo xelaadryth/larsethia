@@ -10,7 +10,8 @@ def talk(player, target):
     # Now that we have a legal target, try to talk
     try:
         player.db.talk_target = target
-        EvMenu(player, target.db.talk_file)
+        # Don't automatically look on exit
+        EvMenu(player, target.db.talk_file, cmd_on_exit=None)
         player.location.msg_contents("{} talks to {}.".format(player.name, target.name), exclude=player)
     except ImportError:
         player.msg("Dialogue is broken, please contact the builders.")
