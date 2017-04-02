@@ -18,6 +18,16 @@ class SharedObject(DefaultObject):
     Defines functions that should be shared across Characters, Exits, Objects, and Rooms.
     Used as a mix-in or directly inherited from for all of those classes.
     """
+    def get_display_appearance(self, looker):
+        """
+        Gets the current description of the object. Can be overridden for custom appearance based on
+        who is looking at it.
+
+        Args:
+            looker (Object): Object doing the looking.
+        """
+        return self.db.desc
+
     def return_appearance(self, looker):
         """
         This formats a description. It is the hook a 'look' command
@@ -43,7 +53,7 @@ class SharedObject(DefaultObject):
                 things.append(key)
         # get description, build string
         string = "|c%s|n\n" % self.get_display_name(looker)
-        desc = self.db.desc
+        desc = self.get_display_appearance(looker)
         if desc:
             string += "%s" % desc
         if exits:
