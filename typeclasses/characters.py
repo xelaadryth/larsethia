@@ -12,8 +12,32 @@ from typeclasses.objects import SharedObject
 from utils.constants import QUEST_COMPLETE
 
 
-class Character(SharedObject, DefaultCharacter):
+class SharedCharacter(SharedObject, DefaultCharacter):
     """
+    Character functionality shared with NPCs
+
+    at_basetype_setup - always assigns the DefaultCmdSet to this object type
+                    (important!)sets locks so character cannot be picked up
+                    and its commands only be called by itself, not anyone else.
+                    (to change things, use at_object_creation() instead).
+    at_after_move(source_location) - Launches the "look" command after every move.
+    at_post_unpuppet(player) -  when Player disconnects from the Character, we
+                    store the current location in the pre_logout_location Attribute and
+                    move it to a None-location so the "unpuppeted" character
+                    object does not need to stay on grid. Echoes "Player has disconnected"
+                    to the room.
+    at_pre_puppet - Just before Player re-connects, retrieves the character's
+                    pre_logout_location Attribute and move it back on the grid.
+    at_post_puppet - Echoes "PlayerName has entered the game" to the room.
+
+    """
+    pass
+
+
+class Character(SharedCharacter):
+    """
+    Player characters.
+
     The Character defaults to reimplementing some of base Object's hook methods with the
     following functionality:
 
@@ -32,13 +56,14 @@ class Character(SharedObject, DefaultCharacter):
     at_post_puppet - Echoes "PlayerName has entered the game" to the room.
 
     """
-    def at_object_creation(self):
+    def at_pre_puppet(self, *args, **kwargs):
+        """
+        Make sure that we have all required fields to support all actions
+        """
         if not self.db.quests:
             self.db.quests = {}
 
-    def at_server_reload(self):
-        if not self.db.quests:
-            self.db.quests = {}
+        super(Character, self).at_pre_puppet(*args, **kwargs)
 
     def quest_status(self, quest_name):
         """

@@ -1,5 +1,5 @@
-from typeclasses.characters import Character
+from typeclasses.characters import SharedCharacter
 
 
-class NPC(Character):
+class NPC(SharedCharacter):
     pass

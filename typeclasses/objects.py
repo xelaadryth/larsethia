@@ -31,7 +31,7 @@ class SharedObject(DefaultObject):
     def return_appearance(self, looker):
         """
         This formats a description. It is the hook a 'look' command
-        should call.
+        should call. Note that any changes to evennia's base return_appearance function will need to be reflected here
 
         Args:
             looker (Object): Object doing the looking.
