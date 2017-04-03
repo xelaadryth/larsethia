@@ -19,6 +19,7 @@ Just connect to the game at http://larsethia.themud.org/ by hitting the "Play On
 7. (Optional) `docker-compose logs -f` to show live output
 
 ## To Do
+- Rename "get_err_msg" to "err_get" to set standards for error attribute naming
 - Add an "idle" system to display messages every X seconds with some % chance **[Eric]**
   - Something attached to the player so empty rooms don't have scripts running in them (DONE)
   - Something easy to modify from within the game so you don't need to code
