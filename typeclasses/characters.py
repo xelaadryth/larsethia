@@ -8,6 +8,7 @@ creation commands.
 
 """
 from evennia import DefaultCharacter
+from systems.idle import IdleScript
 from typeclasses.objects import SharedObject
 from utils.constants import QUEST_COMPLETE
 
@@ -58,12 +59,26 @@ class Character(SharedCharacter):
     """
     def at_pre_puppet(self, *args, **kwargs):
         """
-        Make sure that we have all required fields to support all actions
+        Make sure that we have all required fields to support all actions.
+
+        Add any scripts we need.
         """
         if not self.db.quests:
             self.db.quests = {}
 
+        self.scripts.add(IdleScript)
+
         super(Character, self).at_pre_puppet(*args, **kwargs)
+
+    def at_post_unpuppet(self, *args, **kwargs):
+        """
+        Make sure that we have all required fields to support all actions.
+
+        Remove any scripts we don't want running when not online.
+        """
+        self.scripts.delete(IdleScript.get_key(self))
+
+        super(Character, self).at_post_unpuppet(*args, **kwargs)
 
     def quest_status(self, quest_name):
         """
