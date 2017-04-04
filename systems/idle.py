@@ -11,13 +11,17 @@ class CmdIdle(Command):
     there's a chance it will display a message.
 
     Usage:
+      @idle
       @idle <objname>
       @idle <objname> = <avg seconds>, <idle text>
       @idle/del <objname> = <idle id>
     Example:
+      @idle children
       @idle here = 60, Echoes fill the cavern as a droplet of water falls from the ceiling into a murky puddle.
+      @idle/del here = 0
 
-    @idle <objname> lists all idle text on an object.
+    @idle - lists all idle objects in the current location
+    @idle <objname> - lists all idle text on an object.
     With a delete switch, removes the nth piece of idle text. Is NOT associated with a dbref.
     """
     key = "@idle"
@@ -26,7 +30,23 @@ class CmdIdle(Command):
 
     def func(self):
         if not self.args:
-            self.caller.msg("Usage: @idle <objname> = <avg seconds>, <idle text>")
+            if not self.caller.location:
+                self.caller.msg("No location to search for idle objects.")
+                return
+
+            idle_objs = [self.caller.location]
+            for obj in self.caller.location.contents:
+                if obj.db.idle:
+                    idle_objs.append(obj)
+
+            if len(idle_objs) == 0:
+                self.caller.msg("No objects with idle lines are present in {}.".format(self.caller.location.name))
+                return
+
+            output = "Objects with idle lines:"
+            for obj in idle_objs:
+                output += "\n(#{}) {}".format(obj.id, obj.name)
+            self.caller.msg(output)
             return
 
         target = self.caller.search(self.lhs)
