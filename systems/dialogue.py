@@ -33,18 +33,27 @@ class CmdTalk(Command):
     help_category = "General"
 
     def can_talk(self, target):
-        return target and (target != self.caller) and (target.access(self.caller, "view")) and\
-            (target.access(self.caller, "talk", default=True)) and target.db.talk_file
+        return target and (target != self.caller) and (target.access(self.caller, "view")) and target.db.talk_file
 
     def func(self):
         # Acquire target
         if not self.args:
+            possible = []
             legal = []
             for obj in self.caller.location.contents:
                 if self.can_talk(obj):
-                    legal.append(obj)
+                    possible.append(obj)
+                    if obj.access(self.caller, "talk", default=True):
+                        legal.append(obj)
 
             if len(legal) == 0:
+                if len(possible) == 1:
+                    # If there's only one talkative person in the room but you have no access, check if they have
+                    # a specific talk error
+                    target = possible[0]
+                    if target.db.err_talk:
+                        self.caller.msg(target.db.err_talk)
+                        return
                 self.caller.msg("There's no one talkative here.")
                 return
             elif len(legal) == 1:
@@ -65,8 +74,11 @@ class CmdTalk(Command):
                 self.caller.location.msg_contents("{} talks to no one in particular.".format(self.caller.name),
                                                   exclude=self.caller)
                 return
-            elif not self.can_talk(target):
-                self.caller.msg("{} isn't talkative.".format(target))
+            elif not self.can_talk(target) or not target.access(self.caller, "talk", default=True):
+                if target.db.err_talk:
+                    self.caller.msg(target.db.err_talk)
+                else:
+                    self.caller.msg("{} isn't talkative.".format(target))
                 return
 
         talk(self.caller, target)
