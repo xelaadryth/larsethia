@@ -99,6 +99,7 @@ class CmdNPC(Command):
 
         caller.execute_cmd("@create {}:typeclasses.npcs.NPC".format(self.args))
 
+
 class CmdHide(Command):
     """
     Hides objects so they're not obvious to players by removing them from the list of room contents.

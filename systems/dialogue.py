@@ -54,6 +54,7 @@ class CmdTalk(Command):
                     if target.db.err_talk:
                         self.caller.msg(target.db.err_talk)
                         return
+
                 self.caller.msg("There's no one talkative here.")
                 return
             elif len(legal) == 1:

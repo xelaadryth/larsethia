@@ -17,8 +17,9 @@ own cmdsets by inheriting from them or directly from `evennia.CmdSet`.
 from evennia import default_cmds
 from evennia.commands.default.general import CmdGive
 from systems.building import CmdCreate, CmdNPC, CmdHide, CmdUnhide, CmdBoot
-from systems.general import CmdGet
 from systems.dialogue import CmdTalk, CmdAddTalk, CmdDelTalk
+from systems.general import CmdGet
+from systems.idle import CmdIdle
 from systems.quests import CmdQuests, CmdQuestSet
 
 
@@ -49,6 +50,7 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(CmdQuestSet())
         self.add(CmdNPC())
         self.add(CmdBoot())
+        self.add(CmdIdle())
 
 
 class PlayerCmdSet(default_cmds.PlayerCmdSet):

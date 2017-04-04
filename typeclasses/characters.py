@@ -66,7 +66,9 @@ class Character(SharedCharacter):
         if not self.db.quests:
             self.db.quests = {}
 
-        self.scripts.add(IdleScript)
+        # We shouldn't have an idle script attached yet, but just in case we don't want to have more than one
+        if not self.scripts.get(IdleScript.get_key(self)):
+            self.scripts.add(IdleScript)
 
         super(Character, self).at_pre_puppet(*args, **kwargs)
 
