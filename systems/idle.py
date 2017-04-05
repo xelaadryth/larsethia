@@ -154,7 +154,8 @@ class IdleScript(Script):
             remaining_chance = random.random()
             # Iterate over the room's contents in random order
             for obj in random.sample(self.obj.location.contents, len(self.obj.location.contents)):
-                if obj != self.obj and obj.db.idle and obj.access(self.obj, "idle", default=True):
+                if (obj != self.obj and obj.db.idle and obj.access(self.obj, "view")
+                        and obj.access(self.obj, "idle", default=True)):
                     # Randomly pick a line
                     for idle_time, idle_line in random.sample(obj.db.idle, len(obj.db.idle)):
                         # If it's not a valid number, just always display it

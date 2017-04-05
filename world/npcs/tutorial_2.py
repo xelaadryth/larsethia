@@ -17,6 +17,7 @@ def start(caller):
 
     return text, options
 
+
 def portal(caller):
     text = ('You turn to point at the portal, but then realize the old man has disappeared.\n\n'
             'As you try to think about where he may have gone, you realize with horror that there is no old man '

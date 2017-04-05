@@ -19,6 +19,9 @@ Just connect to the game at http://larsethia.themud.org/ by hitting the "Play On
 7. (Optional) `docker-compose logs -f` to show live output
 
 ## To Do
+- Create an object spawner, and a command for Builders to create spawners
+- Finish making Mirienne's lost kitten quest once spawners are implemented (to spawn kittens) **[Eric]**
+- Fix bug where if you look at an object that has "view" locked, it gives you the name of the object
 - Standardize a process for unit tests
 - Containers as locks (if lock container not set, not treated as container. If lock access is true, the player has permission to access the container's contents.) **[Jobin]**
   - "get book from chest"

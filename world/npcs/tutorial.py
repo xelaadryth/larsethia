@@ -30,6 +30,7 @@ def start(caller):
 
     return text, options
 
+
 def where(caller):
     text = '"You\'re in Larsethia, of course! What a silly question."'
 
@@ -42,6 +43,7 @@ def where(caller):
     ]
 
     return text, options
+
 
 def who(caller):
     text = '"Now it\'s rude to just ask people who they are, {}. I\'m just a crazy old man, don\'t mind me!'.format(
@@ -59,6 +61,7 @@ def who(caller):
 
     return text, options
 
+
 def name(caller):
     text = '"Well it would be rude to ask of it, would it not? You speak in circles, haha!"'
 
@@ -68,6 +71,7 @@ def name(caller):
     ]
 
     return text, options
+
 
 def guide(caller):
     text = ('"Very well, just follow me!"\n\nThe old man leaves to the east.\n\n'
@@ -79,6 +83,7 @@ def guide(caller):
     caller.quest_advance(INTERNAL_NAME, 1)
 
     return text, []
+
 
 def end(caller):
     return '"Pleasant journeys!"', []
