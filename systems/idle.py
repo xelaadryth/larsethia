@@ -34,7 +34,10 @@ class CmdIdle(Command):
                 self.caller.msg("No location to search for idle objects.")
                 return
 
-            idle_objs = [self.caller.location]
+            idle_objs = []
+            # The location may also have idle lines
+            if self.caller.location.db.idle:
+                idle_objs.append(self.caller.location)
             for obj in self.caller.location.contents:
                 if obj.db.idle:
                     idle_objs.append(obj)
