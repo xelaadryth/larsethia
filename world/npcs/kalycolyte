@@ -1,6 +1,3 @@
-from world.quests.kalycolyte import INTERNAL_NAME
-
-
 OPTION_WHERE = {
     "desc": '"Where am I?"',
     "goto": "where"
