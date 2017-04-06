@@ -66,7 +66,7 @@ def kall(caller):
         },
     ]
     
-    return text, []
+    return text, options
 
 
 def end(caller):
