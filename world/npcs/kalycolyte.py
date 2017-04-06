@@ -13,7 +13,7 @@ OPTION_KALL = {
 
 
 def start(caller):
-    text = '"Welcome to Kall's Sandbox!\n\n "I am Kalycolyte, fanatic of Kall."'
+    text = '"Welcome to Kall\'s Sandbox!\n\n "I am Kalycolyte, fanatic of Kall."'
 
     options = [
         OPTION_WHERE,
