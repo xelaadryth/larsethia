@@ -8,7 +8,7 @@ OPTION_WHO = {
 }
 OPTION_KALL = {
     "desc": '"Who is Kall?"',
-    "goto": "guide"
+    "goto": "kall"
 }
 
 
