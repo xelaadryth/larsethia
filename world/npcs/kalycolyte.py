@@ -13,7 +13,7 @@ OPTION_KALL = {
 
 
 def start(caller):
-    text = '"Welcome to Kall\'s Sandbox!\n\n "I am Kalycolyte, fanatic of Kall."'
+    text = '"Welcome to Kall\'s Sandbox!\n\n"I am Kalycolyte, fanatic of Kall."'
 
     options = [
         OPTION_WHERE,
@@ -49,8 +49,8 @@ def who(caller):
         {
             "desc": '"Again with this Kall guy, can I get some answers?"',
             "goto": "kall"
-        },
-        OPTION_WHERE,
+        }
+        OPTION_WHERE
     ]
 
     return text, options
@@ -63,7 +63,7 @@ def kall(caller):
         {
             "desc": '"You\'re mad! I think I\'ll leave...?"',
             "goto": "end"
-        },
+        }
     ]
     
     return text, options
