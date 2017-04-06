@@ -19,6 +19,7 @@ def start(caller):
 
 def traveler(caller):
     text = "Ah, a nomad. There is food and lodging inside the temple, if you have the coin."
+    
     options = [
         {
             "desc": '"Very well..."',
@@ -29,6 +30,7 @@ def traveler(caller):
     
 def faith(caller):
     text = "Another pilgrim who wishes to be graced by Meruvia. Enter, child"
+    
     options = [
         {
             "desc": '"My thanks"',
