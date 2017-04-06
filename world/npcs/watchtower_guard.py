@@ -11,7 +11,7 @@ def start(caller):
             "goto": "faith"
         },
         {
-            "desc": '"A Warrior'",
+            "desc": '"A Warrior'"
             "goto": "warrior"
         }
     ]
