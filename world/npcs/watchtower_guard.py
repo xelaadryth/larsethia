@@ -4,11 +4,11 @@ def start(caller):
 
     options = [
         {
-            "dsec": '"A Traveler"',
+            "desc": '"A Traveler"',
             "goto": "traveler"
         },
         {
-            "dsec": '"A Man of Faith"',
+            "desc": '"A Man of Faith"',
             "goto": "faith"
         },
         {
