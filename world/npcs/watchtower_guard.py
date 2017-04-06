@@ -1,4 +1,5 @@
 def start(caller):
+    
     text = "Aye! Who goes there!"
 
     options = [
@@ -11,13 +12,15 @@ def start(caller):
             "goto": "faith"
         },
         {
-            "desc": '"A Warrior'"
+            "desc": '"A Warrior'",
             "goto": "warrior"
         }
     ]
+    
     return text, options
 
 def traveler(caller):
+    
     text = "Ah, a nomad. There is food and lodging inside the temple, if you have the coin."
     
     options = [
@@ -26,9 +29,11 @@ def traveler(caller):
             "goto": "end"
         }
     ]
+    
     return text, options
     
 def faith(caller):
+    
     text = "Another pilgrim who wishes to be graced by Meruvia. Enter, child"
     
     options = [
@@ -37,10 +42,13 @@ def faith(caller):
             "goto": "end"
         }
     ]
+    
     return text, options
     
 def warrior(caller):
+    
     return '"Aye, we will see about that, Meruvia will bless those who battle the darkness. Go forth, and may Meruvia\'s light bless you."', []
     
 def end(caller):
+    
     return '"Go forth, and may Meruvia\'s light bless you."', []
