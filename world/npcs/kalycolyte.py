@@ -59,12 +59,12 @@ def who(caller):
 def kall(caller):
     text = "KALL! THE IMMORTAL! THE SHAPER OF WORLDS! YOU STAND UPON HIS DOMAIN! YOU ARE HIS SHEEP, HIS SLAVE! 
 
-options = [
+    options = [
         {
             "desc": '"You\'re mad! I think I\'ll leave...?"',
             "goto": "end"
         },
-
+    ]
     
     return text, []
 
