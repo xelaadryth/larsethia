@@ -49,7 +49,7 @@ def who(caller):
         {
             "desc": '"Again with this Kall guy, can I get some answers?"',
             "goto": "kall"
-        }
+        },
         OPTION_WHERE
     ]
 
