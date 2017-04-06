@@ -57,7 +57,7 @@ def who(caller):
 
 
 def kall(caller):
-    text = "KALL! THE IMMORTAL! THE SHAPER OF WORLDS! YOU STAND UPON HIS DOMAIN! YOU ARE HIS SHEEP, HIS SLAVE! 
+    text = '"KALL! THE IMMORTAL! THE SHAPER OF WORLDS! YOU STAND UPON HIS DOMAIN! YOU ARE HIS SHEEP, HIS SLAVE!"' 
 
     options = [
         {
