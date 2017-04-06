@@ -38,7 +38,7 @@ def faith(caller):
     return text, options
     
 def warrior(caller):
-    return '"Aye, we/'ll see anout that, Meruvia will bless those who battle the darkness. Go forth, and may Meruvia\'s light bless you."', []
+    return '"Aye, we will see about that, Meruvia will bless those who battle the darkness. Go forth, and may Meruvia\'s light bless you."', []
     
 def end(caller):
     return '"Go forth, and may Meruvia\'s light bless you."', []
