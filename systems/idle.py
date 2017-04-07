@@ -15,24 +15,24 @@ class CmdIdle(Command):
 
     Usage:
       @idle
-      @idle/all
       @idle <objname>
       @idle <objname> = <avg seconds>, <idle text>
+      @idle/all
       @idle/del <objname> = <idle id>
       @idle/clear <objname>
     Example:
       @idle
-      @idle/all
       @idle children
       @idle here = 60, Echoes fill the cavern as a droplet of water falls from the ceiling into a murky puddle.
+      @idle/all
       @idle/del here = 0
       @idle/clear children
 
-    @idle - lists all idle objects in the current location
-    @idle <objname> - lists all idle text on an object.
-    With an "all" switch, lists all objects with idle text in the game.
-    With a "delete" switch, removes the nth piece of idle text. Is NOT associated with a dbref.
-    With a "clear" switch, removes all idle text from an object.
+    @idle - lists all idle objects in the current location.
+    @idle <objname> - lists all idle text on an object, each with an idle id.
+    @idle/all - lists all objects with idle text in the game and their locations.
+    @idle/del - removes the nth piece of idle text by idle id. Is NOT associated with a dbref.
+    @idle/clear - removes all idle text from an object.
     """
     key = "@idle"
     locks = "cmd:perm(idle) or perm(Builders)"
