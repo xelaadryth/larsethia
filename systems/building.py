@@ -150,6 +150,7 @@ class CmdUnhide(Command):
 
         caller.execute_cmd("@lock/del {}/notice".format(self.lhs))
 
+
 class CmdBoot(Command):
     """
     kick a player from the server. If there is a character without an associated player in the room, boots that instead.

@@ -1,8 +1,11 @@
 import random
 from commands.command import Command
-from evennia.utils import logger
+from evennia.utils import logger, search
 from typeclasses.scripts import Script
-from utils.constants import IDLE_INTERVAL
+from utils.constants import IDLE_INTERVAL, TAG_CATEGORY_BUILDING
+
+
+IDLE_TAG = "idle"
 
 
 class CmdIdle(Command):
@@ -12,23 +15,46 @@ class CmdIdle(Command):
 
     Usage:
       @idle
+      @idle/all
       @idle <objname>
       @idle <objname> = <avg seconds>, <idle text>
       @idle/del <objname> = <idle id>
+      @idle/clear <objname>
     Example:
+      @idle
+      @idle/all
       @idle children
       @idle here = 60, Echoes fill the cavern as a droplet of water falls from the ceiling into a murky puddle.
       @idle/del here = 0
+      @idle/clear children
 
     @idle - lists all idle objects in the current location
     @idle <objname> - lists all idle text on an object.
-    With a delete switch, removes the nth piece of idle text. Is NOT associated with a dbref.
+    With an "all" switch, lists all objects with idle text in the game.
+    With a "delete" switch, removes the nth piece of idle text. Is NOT associated with a dbref.
+    With a "clear" switch, removes all idle text from an object.
     """
     key = "@idle"
     locks = "cmd:perm(idle) or perm(Builders)"
     help_category = "Building"
 
     def func(self):
+        if "all" in self.switches:
+            idle_objs = search.search_object_by_tag(IDLE_TAG, TAG_CATEGORY_BUILDING)
+
+            if len(idle_objs) == 0:
+                self.caller.msg("No objects with idle lines exist.")
+                return
+
+            output = "Objects with idle lines by room:"
+            for obj in idle_objs:
+                if obj.location:
+                    output += "\n(#{}) {} [(#{}) {}]".format(obj.id, obj.name, obj.location.id, obj.location.name)
+                else:
+                    output += "\n(#{}) {}".format(obj.id, obj.name)
+            self.caller.msg(output)
+            return
+
         if not self.args:
             if not self.caller.location:
                 self.caller.msg("No location to search for idle objects.")
@@ -46,7 +72,7 @@ class CmdIdle(Command):
                 self.caller.msg("No objects with idle lines are present in {}.".format(self.caller.location.name))
                 return
 
-            output = "Objects with idle lines:"
+            output = "Objects with idle lines in this room:"
             for obj in idle_objs:
                 output += "\n(#{}) {}".format(obj.id, obj.name)
             self.caller.msg(output)
@@ -125,6 +151,8 @@ class CmdIdle(Command):
         else:
             target.db.idle.append((idle_time, idle_line))
 
+        target.tags.add(IDLE_TAG, TAG_CATEGORY_BUILDING)
+
         self.caller.msg("Added new idle message to {}.".format(target.name))
 
 
@@ -152,8 +180,10 @@ class IdleScript(Script):
         if self.obj.location:
             # Random percentage chance of an idle message proccing
             remaining_chance = random.random()
-            # Iterate over the room's contents in random order
-            for obj in random.sample(self.obj.location.contents, len(self.obj.location.contents)):
+            # Iterate over the room and its contents in random order
+            possible_idle_objs = self.obj.location.contents[:]
+            possible_idle_objs.append(self.obj.location)
+            for obj in random.sample(possible_idle_objs, len(possible_idle_objs)):
                 if (obj != self.obj and obj.db.idle and obj.access(self.obj, "view")
                         and obj.access(self.obj, "idle", default=True)):
                     # Randomly pick a line
