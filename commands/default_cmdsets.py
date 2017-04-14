@@ -21,6 +21,7 @@ from systems.dialogue import CmdTalk, CmdAddTalk, CmdDelTalk
 from systems.general import CmdGet
 from systems.idle import CmdIdle
 from systems.quests import CmdQuests, CmdQuestSet
+from systems.spawner import CmdSpawner
 
 
 class CharacterCmdSet(default_cmds.CharacterCmdSet):
@@ -51,6 +52,7 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(CmdNPC())
         self.add(CmdBoot())
         self.add(CmdIdle())
+        self.add(CmdSpawner())
 
 
 class PlayerCmdSet(default_cmds.PlayerCmdSet):

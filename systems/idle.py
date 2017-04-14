@@ -10,29 +10,29 @@ IDLE_TAG = "idle"
 
 class CmdIdle(Command):
     """
-    Checks, adds, or deletes idle text onto an object. Every time the idle script on the player ticks,
-    there's a chance it will display a message.
+    Checks, adds, or deletes idle text onto an object. Every time the idle
+    script on the player ticks, there's a chance it will display a message.
 
     Usage:
       @idle
+        lists all idle objects in the current location
       @idle <objname>
+        lists all idle text on an object, each with an idle id
       @idle <objname> = <avg seconds>, <idle text>
+        creates new idle text on an object that procs with the given rate and text
       @idle/all
+        lists all objects with idle text in the game and their locations
       @idle/del <objname> = <idle id>
+        removes the nth piece of idle text by idle id. Is NOT associated with a dbref
       @idle/clear <objname>
-    Example:
+        removes all idle text from an object
+    Examples:
       @idle
       @idle children
-      @idle here = 60, Echoes fill the cavern as a droplet of water falls from the ceiling into a murky puddle.
+      @idle here = 60, A droplet of water falls from the ceiling into a murky puddle.
       @idle/all
       @idle/del here = 0
       @idle/clear children
-
-    @idle - lists all idle objects in the current location.
-    @idle <objname> - lists all idle text on an object, each with an idle id.
-    @idle/all - lists all objects with idle text in the game and their locations.
-    @idle/del - removes the nth piece of idle text by idle id. Is NOT associated with a dbref.
-    @idle/clear - removes all idle text from an object.
     """
     key = "@idle"
     locks = "cmd:perm(idle) or perm(Builders)"
