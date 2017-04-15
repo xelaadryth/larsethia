@@ -21,6 +21,7 @@ Just connect to the game at http://larsethia.themud.org/ by hitting the "Play On
 ## To Do
 - Finish object spawner and related command switches **[Eric]**
 - Finish making Mirienne's lost kitten quest once spawners are implemented (to spawn kittens) **[Eric]**
+- Create a "map" command that crawls nearby rooms with traverse privileges and generates an ASCII map
 - Create a command to list all tags used in the game
 - Create a command to examine scripts
 - Create a command to set attributes on scripts
