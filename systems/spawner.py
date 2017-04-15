@@ -23,27 +23,25 @@ class CmdSpawner(Command):
     Usage:
       @spawner
         lists all spawner scripts in the current location
-      @spawner <spawner #>
+      @spawner <script #>
         lists out details about the given spawner
       @spawner <obj name>[;alias1;alias2] = <class path>
         creates a spawner that immediately starts respawning objects (together)
       @spawner/all
         lists all spawners in the game and their locations.
-      @spawner/del <spawner #>
-        deletes a spawner by its id in the current room
-      @spawner/name <spawner #> = <obj name>
+      @spawner/del <script #>
+        deletes a spawner by its script id
+      @spawner/name <script #> = <obj name>
         rename the things a spawner spawns
-      @spawner/alias <spawner #> = <alias1, alias2>
+      @spawner/alias <script #> = <alias1, alias2>
         set aliases for the things a spawner spawns
-      @spawner/type <spawner #> = <class path>
+      @spawner/type <script #> = <class path>
         change the type of the things a spawner spawns
-      @spawner/group <spawner #> = <True/False>
-        change whether the spawner waits for all named units before respawning
-      @spawner/set <spawner #>/<attr>[ = <value>]
+      @spawner/set <script #>/<attr>[ = <value>]
         set or unset what attributes should be present on spawned objects
-      @spawner/lock <spawner #> = <lockstring>
+      @spawner/lock <script #> = <lockstring>
         set what locks should be present on spawned objects
-      @spawner/lockdel <spawner #>/<access type>
+      @spawner/lockdel <script #>/<access type>
         delete locks that would otherwise be present on spawned objects
     Examples:
       @spawner
@@ -54,7 +52,6 @@ class CmdSpawner(Command):
       @spawner/name 1 = a brutal orc
       @spawner/alias 1 = orc,brute
       @spawner/type 1 = world.npcs.orc.BrutalOrc
-      @spawner/group 1 = True
       @spawner/set 1/desc = "A brutal orc stands here."
       @spawner/lock 0 = view:quest(lost kitten, 1)
       @spawner/lockdel 0/view
@@ -72,7 +69,7 @@ class CmdSpawner(Command):
                 self.caller.msg("No spawners exist.")
                 return
 
-            table = EvTable("Scr #", "Script Key", "Loc #", "Location")
+            table = EvTable("Scr #", "Spawn Name", "Loc #", "Location", "Respawn", border="cells")
             for spawner in spawners:
                 if spawner.obj:
                     location_dbref = spawner.obj.dbref
@@ -80,7 +77,8 @@ class CmdSpawner(Command):
                 else:
                     location_dbref = "N/A"
                     location_key = "No Location"
-                table.add_row(spawner.dbref, spawner.key, location_dbref, location_key)
+                respawn_indicator = spawner.respawn_timer()
+                table.add_row(spawner.dbref, spawner.db.spawn_name, location_dbref, location_key, respawn_indicator)
             output = "|wSpawners by location:|n\n{}".format(table)
             self.caller.msg(output)
 
@@ -91,16 +89,49 @@ class CmdSpawner(Command):
             caller.msg("You need to be in a location to check for spawners.")
             return
 
-        # TODO: All code flows and switches
         if not self.args:
-            caller.msg("TODO: Display all spawners in this room")
+            # List out details for all spawners in the current room
+            spawners = []
+            for script in caller.location.scripts.all():
+                if isinstance(script, Spawner):
+                    spawners.append(script)
+
+            if len(spawners) == 0:
+                self.caller.msg("No spawners are present in this location.")
+                return
+
+            # TODO: Add details to this view
+            table = EvTable("Scr #", "Spawn Name", "Typeclass", "Aliases", "Respawn", border="cells")
+            for spawner in spawners:
+                respawn_indicator = spawner.respawn_timer()
+                if spawner.db.aliases:
+                    aliases = ",".join(spawner.db.aliases)
+                else:
+                    aliases = ""
+                table.add_row(spawner.dbref, spawner.db.spawn_name, spawner.db.spawn_type, aliases,
+                              respawn_indicator)
+            output = "|wSpawners in this location:|n\n{}".format(table)
+            self.caller.msg(output)
+
             return
 
         # TODO: Set what the spawner makes only if creation was successful
         if not self.switches:
             if self.rhs:
+                try:
+                    class_from_module(self.rhs)
+                except ImportError:
+                    caller.msg("{} is not a valid class path, not creating the spawner.".format(self.rhs))
+                    return
+
+                split_left = self.lhs.split(';')
+                spawn_name = split_left[0]
+                if len(split_left) > 1:
+                    aliases = split_left[1:]
+                else:
+                    aliases = []
                 spawner = create_script(typeclass=Spawner,
-                                        key=Spawner.get_key(self.lhs),
+                                        key=Spawner.get_key(spawn_name),
                                         obj=caller.location,
                                         interval=5,
                                         start_delay=True,
@@ -108,20 +139,19 @@ class CmdSpawner(Command):
                                         autostart=False,
                                         desc="Respawns target on a cadence if target is missing.")
                 spawner.tags.add(SPAWNER_TAG, TAG_CATEGORY_BUILDING)
-                split_left = self.lhs.split(';')
-                spawner.db.spawn_name = split_left[0]
-                if len(split_left) > 1:
-                    spawner.db.aliases = split_left[1:]
-                else:
-                    spawner.db.aliases = []
+                spawner.db.spawn_name = spawn_name
+                spawner.db.aliases = aliases
                 spawner.db.spawn_type = self.rhs
+
                 spawner.start()
-                caller.msg("Successfully started the spawner for: {}".format(self.lhs))
+                caller.msg("Successfully started the spawner for: {}".format(spawner.db.spawn_name))
                 return
             else:
                 caller.msg("@spawner <obj name>[, <obj2 name>...] = <class path>[, <class2 path>...]")
                 return
 
+        # TODO: All code flows and switches
+        pass
 
 class Spawner(Script):
     @staticmethod
@@ -144,6 +174,20 @@ class Spawner(Script):
 
         return None
 
+    def respawn_timer(self):
+        if not self.db.respawn_time:
+            self.db.respawn_time = RESPAWN_TIME_DEFAULT
+        total_respawn = timedelta(seconds=self.db.respawn_time)
+        total_respawn = total_respawn - timedelta(microseconds=total_respawn.microseconds)
+        if self.db.respawn_at:
+            remaining_respawn = (self.db.respawn_at - datetime.now())
+            remaining_respawn = remaining_respawn - timedelta(microseconds=remaining_respawn.microseconds)
+            respawn_indicator = "{}/{}".format(remaining_respawn, total_respawn)
+        else:
+            respawn_indicator = "{}".format(total_respawn)
+
+        return respawn_indicator
+
     def spawn_target(self):
         spawned = create_object(typeclass=self.db.spawn_type,
                                 key=self.db.spawn_name,
@@ -155,7 +199,9 @@ class Spawner(Script):
         self.db.respawn_at = None
 
     def at_repeat(self):
-        if not self.find_target():
+        if self.find_target():
+            self.db.respawn_at = None
+        else:
             if self.db.respawn_at:
                 if datetime.now() >= self.db.respawn_at:
                     self.spawn_target()
