@@ -2,7 +2,7 @@ from commands.command import Command
 from datetime import datetime, timedelta
 from evennia.utils.create import create_object, create_script
 from evennia.utils.utils import class_from_module
-from systems.building import CmdCreate
+from systems.command_overrides import CmdCreate
 from typeclasses.scripts import Script
 from utils.constants import RESPAWN_TIME_DEFAULT, TAG_CATEGORY_BUILDING
 

@@ -28,6 +28,7 @@ class SharedObject(DefaultObject):
         """
         return self.db.desc
 
+    # OVERRIDE: March 2017, evennia.objects.objects.Object.return_appearance
     def return_appearance(self, looker):
         """
         This formats a description. It is the hook a 'look' command

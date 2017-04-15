@@ -16,7 +16,8 @@ own cmdsets by inheriting from them or directly from `evennia.CmdSet`.
 
 from evennia import default_cmds
 from evennia.commands.default.general import CmdGive
-from systems.building import CmdCreate, CmdNPC, CmdHide, CmdUnhide, CmdBoot
+from systems.building import CmdNPC, CmdHide, CmdUnhide
+from systems.command_overrides import CmdCreate, CmdBoot
 from systems.dialogue import CmdTalk, CmdAddTalk, CmdDelTalk
 from systems.general import CmdGet
 from systems.idle import CmdIdle
