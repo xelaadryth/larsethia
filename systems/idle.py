@@ -128,10 +128,11 @@ class CmdIdle(Command):
                 self.caller.msg("No idle messages on {}.".format(target.name))
                 return
             # ID only looks good up to 99, but it will still function after that
-            output = "ID||Avg Sec||Message\n---+-------+-------"
+            table = evtable.EvTable("ID", "Avg Sec", "Message")
             for i, (idle_time, idle_line) in enumerate(idle_list):
-                output += "\n{}||{}||{}".format(str(i).rjust(2), str(idle_time).rjust(7), idle_line)
+                table.add_row(i, idle_time, idle_line)
 
+            output = "|wIdle messages on {}:|n\n{}".format(target.name, table)
             self.caller.msg(output)
             return
 
