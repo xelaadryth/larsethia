@@ -24,7 +24,6 @@ Just connect to the game at http://larsethia.themud.org/ by hitting the "Play On
 - Create a command to list all tags used in the game
 - Create a command to examine scripts
 - Create a command to set attributes on scripts
-- Use EvTables for commands like `@idle/all` and `quests`
 - Fix bug where if you look at an object that has "view" locked, it gives you the name of the object
 - Standardize a process for unit tests
 - Containers as locks (if lock container not set, not treated as container. If lock access is true, the player has permission to access the container's contents.) **[Jobin]**

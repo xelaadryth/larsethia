@@ -1,6 +1,6 @@
 import random
 from commands.command import Command
-from evennia.utils import logger, search
+from evennia.utils import evtable, logger, search
 from typeclasses.scripts import Script
 from utils.constants import IDLE_INTERVAL, TAG_CATEGORY_BUILDING
 
@@ -46,13 +46,18 @@ class CmdIdle(Command):
                 self.caller.msg("No objects with idle lines exist.")
                 return
 
-            output = "Objects with idle lines by room:"
+            table = evtable.EvTable("Obj #", "Object", "Loc #", "Location")
             for obj in idle_objs:
                 if obj.location:
-                    output += "\n(#{}) {} [(#{}) {}]".format(obj.id, obj.name, obj.location.id, obj.location.name)
+                    location_dbref = obj.location.dbref
+                    location_key = obj.location.key
                 else:
-                    output += "\n(#{}) {}".format(obj.id, obj.name)
+                    location_dbref = "N/A"
+                    location_key = "No Location"
+                table.add_row(obj.dbref, obj.key, location_dbref, location_key)
+            output = "|wObjects with idle lines by location:|n\n{}".format(table)
             self.caller.msg(output)
+
             return
 
         if not self.args:

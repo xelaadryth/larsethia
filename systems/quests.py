@@ -1,5 +1,5 @@
 from commands.command import Command
-from evennia.utils import logger, mod_import
+from evennia.utils import evtable, logger, mod_import
 from utils.constants import QUEST_DIR, QUEST_NAME_CONST, QUEST_DESC_CONST
 
 
@@ -21,13 +21,12 @@ class CmdQuests(Command):
         """
         Lists out your quests.
         """
-        initial_output = "Active Quests\n============="
-        output = initial_output
+        table = evtable.EvTable("Quest", "Description", border="cells", maxwidth=80)
         for quest, quest_status in self.caller.db.quests.items():
             try:
                 quest_module = mod_import(QUEST_DIR + quest)
             except Exception as e:
-                logger.log_err("Failed to import module {}".format(QUEST_DIR + quest))
+                logger.log_err("Failed to import module {}: e".format(QUEST_DIR + quest, e))
                 continue
 
             # Quest already completed
@@ -39,19 +38,19 @@ class CmdQuests(Command):
             if not quest_name:
                 continue
 
-            output += "\n" + quest_name
-
             # Skip the description if it's not present
             quest_descs = getattr(quest_module, QUEST_DESC_CONST, None)
             if not quest_descs or len(quest_descs) < quest_status + 1:
                 logger.log_warn("Quest {} missing description for progression {}.".format(quest, quest_status))
                 continue
 
-            output += " - " + quest_descs[quest_status]
+            table.add_row(quest_name, quest_descs[quest_status])
 
-        if output == initial_output:
-            output += "\nNo quests are currently in progress."
-        self.caller.msg(output)
+        if table.nrows < 2:
+            self.caller.msg("No active quests.")
+        else:
+            output = "|wActive Quests|n\n{}".format(table)
+            self.caller.msg(output)
 
 
 class CmdQuestSet(Command):
