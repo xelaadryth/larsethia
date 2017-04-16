@@ -1,10 +1,13 @@
 from commands.command import Command
 from datetime import datetime, timedelta
+from evennia.commands.default.building import _convert_from_string
+from evennia.locks.lockhandler import LockHandler
 from evennia.scripts.models import ScriptDB
 from evennia.utils.create import create_object, create_script
 from evennia.utils.evtable import EvTable
 from evennia.utils.search import search_script_tag
 from evennia.utils.utils import class_from_module
+import re
 from systems.command_overrides import CmdCreate
 from typeclasses.scripts import Script
 from utils.constants import RESPAWN_RATE_DEFAULT, RESPAWN_TICK_RATE, TAG_CATEGORY_BUILDING
@@ -21,9 +24,9 @@ class CmdSpawner(Command):
 
     Usage:
       @spawner
-        lists all spawner scripts in the current location
+        lists detailed info for all spawner scripts in the current location
       @spawner <obj name>[;alias1;alias2] = <class path>
-        creates a spawner that immediately starts respawning objects (together)
+        creates a spawner that immediately starts respawning objects
       @spawner/all
         lists all spawners in the game and their locations.
       @spawner/spawn <script #>
@@ -31,7 +34,7 @@ class CmdSpawner(Command):
       @spawner/del <script #>
         deletes a spawner by its script id
       @spawner/name <script #> = <obj name>[;alias1;alias2;...]
-        rename the things a spawner spawns
+        rename the things a spawner spawns, which also renames the spawner script itself to match
       @spawner/alias <script #> = <alias1, alias2>
         add aliases for the things a spawner spawns
       @spawner/type <script #> = <class path>
@@ -39,26 +42,17 @@ class CmdSpawner(Command):
       @spawner/rate <script #> = <num seconds>
         set the number of seconds it takes for something to respawn, 0 for instant
       @spawner/set <script #>/<attr>[ = <value>]
-        set or unset what attributes should be present on spawned objects
+        view, set, or unset what attributes should be present on spawned objects
       @spawner/setclear <script #>
         clears all attributes that would be set on spawned objects
       @spawner/lock <script #> = <lockstring>
         set what locks should be present on spawned objects
-      @spawner/lockdel <script #>/<access type>
+      @spawner/lockdel <script #>/<lock type>
         delete locks that would otherwise be present on spawned objects
+      @spawner/lockreset <script #>
+        reset locks back to default on spawned objects
     Examples:
-      @spawner
-      @spawner a savage orc;orc;savage = world.npcs.orc.Orc
-      @spawner/all
-      @spawner/del #23
-      @spawner/name #23 = a brutal orc;orc;brute
-      @spawner/alias #23 = orc,brute
-      @spawner/type #23 = world.npcs.orc.BrutalOrc
-      @spawner/rate #23 = 60
-      @spawner/set #23/desc = "A brutal orc stands here."
-      @spawner/setclear #23
-      @spawner/lock #23 = view:quest(lost kitten, 1)
-      @spawner/lockdel #23/view
+      @spawner a savage orc;orc;savage = typeclasses.npcs.orcs.SavageOrc
     """
     key = "@spawner"
     aliases = ["@spawners"]
@@ -80,7 +74,8 @@ class CmdSpawner(Command):
             self.caller.msg("Spawner {} not found, please specify using \"#<dbref>\".".format(id))
             return None
         elif len(spawners) > 1:
-            self.caller.msg("Aborting, multiple spawners matched query: {}".format(id))
+            spawner_dbrefs = ', '.join([spawner.dbref for spawner in spawners])
+            self.caller.msg("Aborting, multiple spawners matched query {}: {}".format(id, spawner_dbrefs))
             return None
 
         return spawners[0]
@@ -113,33 +108,38 @@ class CmdSpawner(Command):
             caller.msg("You need to be in a location to check for spawners.")
             return
 
-        if not self.rhs:
-            # List out details for all spawners in the current room
-            spawners = []
-            for script in caller.location.scripts.all():
-                if isinstance(script, Spawner):
-                    spawners.append(script)
+        if not self.switches:
+            if not self.rhs:
+                # List out details for all spawners in the current room
+                spawners = []
+                for script in caller.location.scripts.all():
+                    if isinstance(script, Spawner):
+                        spawners.append(script)
 
-            if len(spawners) == 0:
-                self.caller.msg("No spawners are present in this location.")
+                if len(spawners) == 0:
+                    self.caller.msg("No spawners are present in this location.")
+                    return
+
+                separator = "\n{}".format("-" * 60)
+                output = "|wSpawners in this location:|n"
+                for spawner in spawners:
+                    output += separator
+                    output += "\nScript Name: {} ({})".format(spawner.key, spawner.dbref)
+                    output += "\nSpawn Target: {} ({})".format(spawner.db.spawn_name, spawner.db.spawn_type)
+                    output += "\nAliases: {}".format(','.join(spawner.db.aliases))
+                    output += "\nRespawn Timer: {}".format(spawner.respawn_timer())
+                    output += "\nSpawned Attributes:"
+                    if not spawner.db.attributes:
+                        output += " None"
+                    else:
+                        for key, value in spawner.db.attributes.items():
+                            output += "\n    {}: {}".format(key, value)
+                    output += "\nLocks: {}".format(spawner.db.lockstring)
+                self.caller.msg(output)
+
                 return
 
-            # TODO: Add details to this view
-            table = EvTable("Scr #", "Spawn Name", "Typeclass", "Aliases", "Respawn", border="cells")
-            for spawner in spawners:
-                respawn_indicator = spawner.respawn_timer()
-                if spawner.db.aliases:
-                    aliases = ",".join(spawner.db.aliases)
-                else:
-                    aliases = ""
-                table.add_row(spawner.dbref, spawner.db.spawn_name, spawner.db.spawn_type, aliases,
-                              respawn_indicator)
-            output = "|wSpawners in this location:|n\n{}".format(table)
-            self.caller.msg(output)
-
-            return
-
-        if not self.switches:
+            # Create a new spawner
             try:
                 class_from_module(self.rhs)
             except ImportError:
@@ -168,8 +168,9 @@ class CmdSpawner(Command):
             caller.msg("Successfully started spawner {}({})".format(spawner.db.spawn_name, spawner.dbref))
             return
 
-        # We're performing some action on an existing script, make sure it exists so we can use it
-        spawner = self.find_spawner(self.lhs)
+        # Parse switches off the spawner search params and find it
+        split_left = self.lhs.split('/', 1)
+        spawner = self.find_spawner(split_left.pop(0))
         if not spawner:
             return
 
@@ -177,7 +178,7 @@ class CmdSpawner(Command):
             spawned = spawner.spawn_target()
             caller.msg("Force spawned {} from spawner {}".format(spawned.get_display_name(caller), spawner.dbref))
             return
-        elif "del" in self.switches:
+        if "del" in self.switches:
             spawner_name = spawner.name
             spawner_dbref = spawner.dbref
             spawner.stop()
@@ -200,6 +201,7 @@ class CmdSpawner(Command):
             spawner.key = Spawner.get_key(spawn_name)
 
             caller.msg("Renamed spawn target for spawner {} to be {}".format(spawner.dbref, spawn_name))
+            return
         elif "alias" in self.switches:
             if not self.rhs:
                 spawner.db.aliases = []
@@ -237,19 +239,83 @@ class CmdSpawner(Command):
             spawner.respawn_rate = int(self.rhs)
             caller.msg("Changed respawn rate for {}({}) to be {} seconds.".format(
                 spawner.db.spawn_name, spawner.dbref, spawner.respawn_rate))
+            return
         elif "set" in self.switches:
-            caller.msg("TODO: Set db attributes on spawned objects.")
+            # Check if we chose an attribute; there should be one more element left in split_left
+            if len(split_left) != 1:
+                caller.msg("Usage: @spawner/set <script #>/<attr>[ = <value>]")
+                return
+            attr = split_left[0]
+
+            # Trying to clear an attribute if present
+            if not self.rhs:
+                if attr in spawner.db.attributes:
+                    del spawner.db.attributes[attr]
+                    caller.msg("Removed attribute {} from appearing on spawned objects on {}({})".format(
+                        attr, spawner.db.spawn_name, spawner.dbref))
+                    return
+                else:
+                    caller.msg("No attribute {} set for spawner {}({})".format(
+                        attr, spawner.db.spawn_name, spawner.dbref))
+                    return
+
+            # We are setting or overwriting an attribute to be placed on spawned objects
+            value = _convert_from_string(self, self.rhs)
+            spawner.db.attributes[attr] = value
+
+            caller.msg("Set attribute {} = {} to appear on objects spawned from {}({})".format(
+                attr, self.rhs, spawner.db.spawn_name, spawner.dbref))
+            return
         elif "setclear" in self.switches:
-            caller.msg("TODO: Clear all db attributes for spawned objects.")
+            spawner.db.attributes = {}
+
+            caller.msg("Cleared all attributes from appearing on objects spawned from {}({})".format(
+                spawner.db.spawn_name, spawner.dbref))
+            return
         elif "lock" in self.switches:
-            caller.msg("TODO: Lock functionality on spawned objects.")
+            spawner.add_lock(self.rhs)
+            caller.msg("Added lock {} to spawner {}({})".format(self.rhs, spawner.db.spawn_name, spawner.dbref))
+            return
         elif "lockdel" in self.switches:
-            caller.msg("TODO: Delete lock functionality on spawned objects.")
+            if self.rhs or len(split_left) != 1:
+                caller.msg("Usage: @spawner/lockdel <script #>/<lock type>")
+            lock_type = split_left[0]
+            spawner.remove_lock(lock_type)
+            caller.msg("Deleted lock {} to spawner {}({})".format(lock_type, spawner.db.spawn_name, spawner.dbref))
+            return
+        elif "lockreset" in self.switches:
+            spawner.reset_locks()
+            caller.msg("Reset locks to default on spawner {}({})".format(spawner.db.spawn_name, spawner.dbref))
+            return
         else:
             caller.msg("Invalid switch. Type \"help @spawner\" for a list of valid switches.")
             return
 
 class Spawner(Script):
+    class LockHolder(object):
+        """
+        An empty object to hold the LockHandler used to compute locks for spawned objects.
+        """
+        def __init__(self, lockstring):
+            self.lock_storage = ""
+            self.locks = LockHandler(self)
+            self.locks.add(lockstring)
+
+    def add_lock(self, lockstring):
+        # OVERRIDE: evennia.commands.default.building.CmdLock.func
+        lockstring = re.sub(r"\'|\"", "", lockstring)
+        self.ndb.lock_holder.locks.add(lockstring)
+        self.db.lockstring = str(self.ndb.lock_holder.locks)
+
+    def remove_lock(self, lock_type):
+        self.ndb.lock_holder.locks.remove(lock_type)
+        self.db.lockstring = str(self.ndb.lock_holder.locks)
+
+    def reset_locks(self):
+        self.db.lockstring = CmdCreate.new_obj_lockstring
+        self.ndb.lock_holder.locks.clear()
+        self.ndb.lock_holder.locks.add(self.db.lockstring)
+
     @property
     def respawn_rate(self):
         if self.db.respawn_rate is None:
@@ -273,10 +339,16 @@ class Spawner(Script):
         return "{}{}".format(SPAWNER_PREFIX, obj_name)
 
     def at_start(self):
-        if self.db.spawn_type:
-            self.ndb.spawn_class = class_from_module(self.db.spawn_type)
         if not self.db.attributes:
             self.db.attributes = {}
+        if not self.db.lockstring:
+            self.db.lockstring = CmdCreate.new_obj_lockstring
+
+        # If this isn't set here, then it's set when self.db.spawn_type is set
+        if self.db.spawn_type:
+            self.ndb.spawn_class = class_from_module(self.db.spawn_type)
+
+        self.ndb.lock_holder = Spawner.LockHolder(self.db.lockstring)
 
     def find_target(self):
         room_contents = self.obj.contents_get()
@@ -308,7 +380,14 @@ class Spawner(Script):
                                 location=self.obj,
                                 home=self.obj,
                                 aliases=self.db.aliases,
-                                locks=CmdCreate.new_obj_lockstring)
+                                locks=self.db.lockstring)
+
+        # Set attributes on the new object
+        for attr, value in self.db.attributes.items():
+            setattr(spawned.db, attr, value)
+
+        # Copy locks from the lock holder
+        spawned.locks.add(str(self.ndb.lock_holder.locks))
 
         self.db.respawn_at = None
 
@@ -328,4 +407,5 @@ class Spawner(Script):
 
     def is_valid(self):
         return (super(Spawner, self).is_valid() and (self.ndb.spawn_class or not self.is_active) and
-                self.obj and self.db.spawn_type and self.db.spawn_name and self.db.aliases is not None)
+                self.obj and self.db.spawn_type and self.db.spawn_name and self.db.aliases is not None and
+                self.db.attributes is not None and self.db.lockstring is not None)
