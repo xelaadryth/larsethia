@@ -51,8 +51,6 @@ class CmdSpawner(Command):
         delete locks that would otherwise be present on spawned objects
       @spawner/lockreset <script #>
         reset locks back to default on spawned objects
-    Examples:
-      @spawner a savage orc;orc;savage = typeclasses.npcs.orcs.SavageOrc
     """
     key = "@spawner"
     aliases = ["@spawners"]
