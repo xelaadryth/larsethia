@@ -19,5 +19,6 @@ QUEST_DESC = [
 class LostKitten(Object):
     def at_get(self, getter):
         if isinstance(getter, Character):
+            self.locks.add("view:all()")
             self.db.desc = "Mirienne's cute kitten looks up at you trustingly and mewls softly."
             getter.quest_advance(INTERNAL_NAME, 2)
