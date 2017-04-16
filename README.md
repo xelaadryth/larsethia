@@ -25,6 +25,11 @@ Just connect to the game at http://larsethia.themud.org/ by hitting the "Play On
 - Create a command to examine scripts
 - Create a command to set attributes on scripts
 - Fix bug where if you look at an object that has "view" locked, it gives you the name of the object
+  - Affects anything that uses generic search since both player and admin commands use the same search
+  - Player commands should only ever attempt viewable objects
+- Smarter targeting
+  - Should perform action if only one legal target, but on no legal targets should show error for the first illegal one
+- Change the template and regexp for generic search util to use "box 1" instead of "1-box" syntax
 - Standardize a process for unit tests
 - Containers as locks (if lock container not set, not treated as container. If lock access is true, the player has permission to access the container's contents.) **[Jobin]**
   - "get book from chest"
