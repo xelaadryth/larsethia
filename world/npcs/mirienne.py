@@ -4,7 +4,7 @@ from world.quests.lost_kitten import INTERNAL_NAME, LostKitten
 def start(caller):
     quest_status = caller.quest_status(INTERNAL_NAME)
     if quest_status == 0:
-        text = 'Mirienne smiles at you and waves Edna\'s tiny paw at you as you approach.\n\n"How can I help you?'
+        text = 'Mirienne smiles at you and waves Edna\'s tiny paw at you as you approach.\n\n"How can I help you?"'
         options = [
             {
                 "desc": '"Oh no need, I\'ll be on my way."',
